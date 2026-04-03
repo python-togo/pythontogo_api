@@ -1,0 +1,13 @@
+.env
+secret*
+.venv/
+venv/
+__pycache__/
+*.pyc
+mock*
+fake*
+test*
+tests/
+.vscode/
+.idea/
+.DS_Store
