@@ -21,6 +21,10 @@ BEGIN
         CREATE TYPE partner_type_enum AS ENUM ('partnership', 'sponsorship', 'media_partner', 'python_community_partner', 'community_partner', 'other');
     END IF;
 
+    IF NOT EXISTS (SELECT 1 FROM pg_type WHERE typname = 'delivery_method_enum') THEN
+        CREATE TYPE delivery_method_enum AS ENUM ('online', 'onsite', 'hybrid');
+    END IF;
+
     IF NOT EXISTS (SELECT 1 FROM pg_type WHERE typname = 'package_tier_enum') THEN
         CREATE TYPE package_tier_enum AS ENUM (
             'headline',
@@ -95,6 +99,8 @@ CREATE_TABLE_QUERIES = [
         title VARCHAR(255) NOT NULL,
         tagline TEXT,
         description TEXT,
+        type event_type_enum NOT NULL DEFAULT 'conference',
+        format delivery_method_enum NOT NULL DEFAULT 'hybrid',
         location VARCHAR(255) NOT NULL,
         country VARCHAR(120) DEFAULT 'Togo',
         city VARCHAR(120) DEFAULT 'Lome',
@@ -158,7 +164,6 @@ CREATE_TABLE_QUERIES = [
     """
     CREATE TABLE IF NOT EXISTS contact_messages (
         id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
-        event_id UUID,
         event_code VARCHAR(32),
         name VARCHAR(255) NOT NULL,
         email VARCHAR(255) NOT NULL,
@@ -167,10 +172,6 @@ CREATE_TABLE_QUERIES = [
         is_resolved BOOLEAN NOT NULL DEFAULT FALSE,
         created_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
         updated_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
-        CONSTRAINT fk_contact_messages_event
-            FOREIGN KEY (event_id)
-            REFERENCES events(id)
-            ON DELETE SET NULL
     );
     """,
     """
@@ -187,7 +188,7 @@ CREATE_TABLE_QUERIES = [
             ON DELETE SET NULL
     );""",
     """
-    CREATE TABLE IF NOT EXISTS track (
+    CREATE TABLE IF NOT EXISTS tracks (
         id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
         event_id UUID NOT NULL,
         name VARCHAR(255) NOT NULL,
@@ -207,6 +208,7 @@ CREATE_TABLE_QUERIES = [
         title VARCHAR(255) NOT NULL,
         description TEXT NOT NULL,
         abstract TEXT,
+        track_id UUID,
         speaker_full_name VARCHAR(255) NOT NULL,
         speaker_email VARCHAR(255) NOT NULL,
         speaker_phone VARCHAR(40),
@@ -216,6 +218,10 @@ CREATE_TABLE_QUERIES = [
         speaker_social_links JSONB,
         session_type session_type_enum NOT NULL,
         language VARCHAR(64) NOT NULL DEFAULT 'French',
+        level VARCHAR(64),
+        needs_equipment BOOLEAN NOT NULL DEFAULT FALSE,
+        equipment_details TEXT,
+        format delivery_method_enum NOT NULL DEFAULT 'onsite',
         status submission_status_enum NOT NULL DEFAULT 'draft',
         created_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
         updated_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
@@ -245,12 +251,13 @@ CREATE_TABLE_QUERIES = [
         CONSTRAINT fk_speakers_event
             FOREIGN KEY (event_id)
             REFERENCES events(id)
-            ON DELETE CASCADE
+            ON DELETE CASCADE,
         CONSTRAINT fk_speakers_proposal
             FOREIGN KEY (proposal_id)
             REFERENCES proposals(id)
             ON DELETE SET NULL
     );""",
+
     """
     CREATE TABLE IF NOT EXISTS sessions (
         id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
@@ -269,15 +276,15 @@ CREATE_TABLE_QUERIES = [
         CONSTRAINT fk_sessions_event
             FOREIGN KEY (event_id)
             REFERENCES events(id)
-            ON DELETE CASCADE
+            ON DELETE CASCADE,
         CONSTRAINT fk_sessions_venue
             FOREIGN KEY (venue_id)
             REFERENCES events(id)
-            ON DELETE CASCADE
+            ON DELETE CASCADE,
         CONSTRAINT fk_sessions_track
             FOREIGN KEY (track_id)
             REFERENCES track(id)
-            ON DELETE SET NULL
+            ON DELETE SET NULL,
         CONSTRAINT fk_sessions_speaker
             FOREIGN KEY (speaker_id)
             REFERENCES speakers(id)

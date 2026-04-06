@@ -1,65 +1,70 @@
+from fastapi import HTTPException, BackgroundTasks
+from app.core.settings import logger
+
 from app.database.orm import select, insert, update, select_with_join, delete
 
 
-async def add_contact(db, payload: dict):
+async def add_contact(db, payload: dict, background_tasks: BackgroundTasks):
     try:
-        await insert(db, "contacts", payload)
+        background_tasks.add_task(insert, db, "contact_messages", payload)
+        return {"message": "Contact message received successfully"}
     except Exception as e:
-        # TODO logging the error can be done here
-        pass
+        logger.error(f"Error adding contact message: {str(e)}")
+        if isinstance(e, HTTPException):
+            raise e
+        raise HTTPException(
+            status_code=500, detail="Error adding contact message")
 
 
-async def delete_contact(db, contact_id: str):
+async def delete_contact(db, contact_id: str, background_tasks: BackgroundTasks):
     try:
-        await delete(db, "contacts", filter={"id": contact_id})
+        background_tasks.add_task(
+            delete, db, "contact_messages", filter={"id": contact_id})
+        return {"message": "Contact deleted successfully"}
     except Exception as e:
-        # TODO logging the error can be done here
-        pass
+        logger.error(f"Error deleting contact: {str(e)}")
+        if isinstance(e, HTTPException):
+            raise e
+        raise HTTPException(status_code=500, detail="Error deleting contact")
 
 
 async def get_contact_by_id(db, contact_id: str):
     try:
-        contact = await select(db, "contacts", filter={"id": contact_id})
+        contact = await select(db, "contact_messages", filter={"id": contact_id})
         if not contact:
-            # TODO logging the error can be done here
-            pass
+            logger.error(f"Contact with id {contact_id} not found")
         return contact[0]
     except Exception as e:
-        # TODO logging the error can be done here
-        pass
-
-
-async def get_contacts_by_event(db, event_code: str):
-    try:
-        contacts = await select_with_join(
-            db,
-            table="contacts",
-            join_table="events",
-            join_condition="contacts.event_id = events.id",
-            filter={"events.code": event_code},
-        )
-        return contacts
-    except Exception as e:
-        # TODO logging the error can be done here
-        pass
+        logger.error(f"Error retrieving contact: {str(e)}")
+        if isinstance(e, HTTPException):
+            raise e
+        raise HTTPException(status_code=500, detail="Error retrieving contact")
 
 
 async def get_all_contacts(db):
     try:
-        contacts = await select(db, "contacts")
+        contacts = await select(db, "contact_messages")
         return contacts
     except Exception as e:
-        # TODO logging the error can be done here
-        pass
+        logger.error(f"Error retrieving all contacts: {str(e)}")
+        if isinstance(e, HTTPException):
+            raise e
+        raise HTTPException(
+            status_code=500, detail="Error retrieving all contacts")
 
 
-async def update_contact(db, contact_id: str, payload: dict):
+async def update_contact(db, contact_id: str, payload: dict, background_tasks: BackgroundTasks):
     try:
-        existing = await select(db, "contacts", filter={"id": contact_id})
+        existing = await select(db, "contact_messages", filter={"id": contact_id})
         if not existing:
-            # TODO logging the error can be done here
-            pass
-        await update(db, "contacts", payload, filter={"id": contact_id})
+            logger.error(f"Contact with id {contact_id} not found")
+            raise HTTPException(
+                status_code=404, detail=f"Contact with id {contact_id} not found")
+        background_tasks.add_task(
+            update, db, "contact_messages", payload, filter={"id": contact_id})
+        return {"message": "Contact updated successfully"}
     except Exception as e:
-        # TODO logging the error can be done here
-        pass
+        logger.error(f"Error updating contact: {str(e)}")
+        if isinstance(e, HTTPException):
+            raise e
+        raise HTTPException(status_code=500, detail="Error updating contact")

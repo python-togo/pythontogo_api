@@ -1,4 +1,21 @@
 from psycopg.sql import SQL, Identifier
+from psycopg.types.json import Jsonb
+
+
+def normalize_value(value):
+    """Normalize a value for SQL queries, handling different data types appropriately.
+
+    Parameters:
+    ----------
+        value: The value to normalize, which can be of various data types (e.g., str, int, dict).
+
+    Returns:
+    -------
+        The normalized value, ready for use in SQL queries. For dictionaries, it returns a Jsonb object.
+    """
+    if isinstance(value, dict):
+        return Jsonb(value)
+    return value
 
 
 def build_column(column):
@@ -45,7 +62,7 @@ def generate_select_query(table, columns=None, filter=None):
         for key, value in filter.items():
             where_clauses.append(SQL("{} = {}").format(
                 Identifier(key), SQL("%s")))
-            values.append(value)
+            values.append(normalize_value(value))
         where_sql = SQL(" AND ").join(where_clauses)
         query += SQL(" WHERE ") + where_sql
     return query, tuple(values)
@@ -80,9 +97,10 @@ def generate_select_query_with_join(table, join_table, join_condition, columns=N
     if filter:
         where_clauses = []
         for key, value in filter.items():
+            column_sql = build_column(key)
             where_clauses.append(SQL("{} = {}").format(
-                Identifier(key), SQL("%s")))
-            values.append(value)
+                column_sql, SQL("%s")))
+            values.append(normalize_value(value))
         where_sql = SQL(" AND ").join(where_clauses)
         query += SQL(" WHERE ") + where_sql
     return query, tuple(values)
@@ -123,10 +141,10 @@ def generate_multiple_joins_query(table, joins, columns=None, filter=None):
     if filter:
         where_clauses = []
         for key, value in filter.items():
-            where_clauses.append(
-                SQL("{} = %s").format(build_column(key))
-            )
-            values.append(value)
+            column_sql = build_column(key)
+            where_clauses.append(SQL("{} = {}").format(
+                column_sql, SQL("%s")))
+            values.append(normalize_value(value))
 
         where_sql = SQL(" AND ").join(where_clauses)
         query += SQL(" WHERE ") + where_sql
@@ -148,7 +166,7 @@ def generate_insert_query(table, data):
     """
 
     columns = data.keys()
-    values = data.values()
+    values = [normalize_value(value) for value in data.values()]
     query = SQL("INSERT INTO {} ({}) VALUES ({})").format(
         Identifier(table),
         SQL(', ').join(build_column(col) for col in columns),
@@ -175,7 +193,7 @@ def generate_update_query(table, data, filter):
     for key, value in data.items():
         set_clauses.append(SQL("{} = {}").format(
             Identifier(key), SQL("%s")))
-        values.append(value)
+        values.append(normalize_value(value))
     set_sql = SQL(", ").join(set_clauses)
     query = SQL("UPDATE {} SET {}").format(
         Identifier(table),
@@ -184,9 +202,10 @@ def generate_update_query(table, data, filter):
     if filter:
         where_clauses = []
         for key, value in filter.items():
+            column_sql = build_column(key)
             where_clauses.append(SQL("{} = {}").format(
-                Identifier(key), SQL("%s")))
-            values.append(value)
+                column_sql, SQL("%s")))
+            values.append(normalize_value(value))
         where_sql = SQL(" AND ").join(where_clauses)
         query += SQL(" WHERE ") + where_sql
     query += SQL(" RETURNING *")
@@ -211,9 +230,10 @@ def generate_delete_query(table, filter):
     if filter:
         where_clauses = []
         for key, value in filter.items():
+            column_sql = build_column(key)
             where_clauses.append(SQL("{} = {}").format(
-                Identifier(key), SQL("%s")))
-            values.append(value)
+                column_sql, SQL("%s")))
+            values.append(normalize_value(value))
         where_sql = SQL(" AND ").join(where_clauses)
         query += SQL(" WHERE ") + where_sql
     query += SQL(" RETURNING id")

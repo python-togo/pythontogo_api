@@ -1,3 +1,4 @@
+from fastapi.responses import FileResponse, HTMLResponse
 from fastapi import FastAPI, Request
 from contextlib import asynccontextmanager
 from psycopg_pool import AsyncConnectionPool
@@ -9,10 +10,10 @@ from app.routers.api import api_routers
 @asynccontextmanager
 async def lifespan(app: FastAPI):
     db_pool = AsyncConnectionPool(conninfo=settings.db_url)
-    app.state.db_pool = db_pool
     await db_pool.open()
-    redis_client = redis.ConnectionPool.from_url(settings.redis_url)
-    redis_client = redis.Redis(connection_pool=redis_client)
+    app.state.db_pool = db_pool
+
+    redis_client = redis.from_url(settings.redis_url)
     app.state.redis_client = redis_client
     yield
     await app.state.db_pool.close()
@@ -31,8 +32,7 @@ app = FastAPI(
 
 @app.get("/")
 async def welcome(request: Request):
-    docs_url = f"{request.base_url}{app.docs_url[1:]}"
-    print(docs_url)
+    docs_url = f"{request.base_url}docs"
     message = {
         "message": "Welcome to Python Togo official api",
         "version": "2.1.0",
@@ -41,5 +41,9 @@ async def welcome(request: Request):
     }
     return message
 
+
+@app.get("/favicon.ico", include_in_schema=False)
+async def favicon():
+    return FileResponse("app/static/favicon.ico")
 
 app.include_router(api_routers)
