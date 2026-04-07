@@ -29,7 +29,7 @@ async def get_proposals_by_event(db, event_code):
     Retrieve all proposals for a specific event.
     """
     try:
-        event_code = event_code.upper()
+        event_code = event_code.strip().upper()
         event_data = await select(db, "events", filter={"code": event_code})
         if not event_data:
             raise HTTPException(status_code=404, detail="Event not found")
@@ -68,7 +68,7 @@ async def add_proposal(db, proposal: ProposalCreate, event_code: str, background
     Add a new proposal to the database.
     """
     try:
-        event_code = event_code.upper()
+        event_code = event_code.strip().upper()
         proposal_data = proposal.model_dump(mode="json")
         event_data = await select(db, "events", filter={"code": event_code})
         if not event_data:
@@ -105,7 +105,8 @@ async def update_proposal(db, proposal_id: str, proposal_update: ProposalUpdate,
     Update details of an existing proposal.
     """
     try:
-        proposal_data = remove_null_values(proposal_update.model_dump(mode="json"))
+        proposal_data = remove_null_values(
+            proposal_update.model_dump(mode="json"))
         if not proposal_data:
             raise HTTPException(
                 status_code=400, detail="No valid fields provided for update")

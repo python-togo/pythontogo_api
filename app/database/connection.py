@@ -4,14 +4,10 @@ from typing import cast
 
 
 async def get_db_connection(request: Request):
-    try:
-        db_pool = request.app.state.db_pool
-        async with db_pool.connection() as connection:
-            yield connection
-    except Exception as e:
-        if isinstance(e, HTTPException):
-            raise e
-        raise HTTPException(status_code=500, detail="Internal server error")
+
+    db_pool = request.app.state.db_pool
+    async with db_pool.connection() as connection:
+        yield connection
 
 
 async def get_redis_client(request: Request):

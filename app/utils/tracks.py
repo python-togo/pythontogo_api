@@ -25,7 +25,7 @@ async def get_tracks_by_event(db, event_code):
     Retrieve all tracks for a specific event.
     """
     try:
-        event_code = event_code.upper()
+        event_code = event_code.strip().upper()
         tracks = await select_with_join(db, table="tracks", join_table="events",
                                         join_condition="tracks.event_id = events.id", filter={"events.code": event_code})
         logger.info(f"Retrieved tracks for event {event_code}: {tracks}")
@@ -59,7 +59,7 @@ async def add_track(db, track: TrackCreate, event_code: str, background_tasks: B
     Add a new track to the database.
     """
     try:
-        event_code = event_code.upper()
+        event_code = event_code.strip().upper()
         track_data = track.model_dump(mode="json")
         event_data = await select(db, "events", filter={"code": event_code})
         if not event_data:

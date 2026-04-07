@@ -21,7 +21,7 @@ async def create_proposal(proposal: ProposalCreate, event_code: str, background_
     Create a new proposal for an event.
     """
     try:
-        event_code = event_code.upper()
+        event_code = event_code.strip().upper()
         result = await add_proposal(db, proposal, event_code, background_tasks=background_tasks)
         return result
     except Exception as e:
@@ -36,7 +36,7 @@ async def list_proposals(event_code: str, db=Depends(get_db_connection)):
     List all proposals for a specific event.
     """
     try:
-        event_code = event_code.upper()
+        event_code = event_code.strip().upper()
         proposals = await get_proposals_by_event(db, event_code)
         if not proposals:
             raise HTTPException(status_code=status.HTTP_404_NOT_FOUND,

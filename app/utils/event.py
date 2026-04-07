@@ -8,7 +8,7 @@ from app.utils.helpers import remove_null_values
 
 async def add_event(db, new_event: dict, background_tasks: BackgroundTasks):
     try:
-        existing = await select(db, "events", filter={"code": new_event["code"].upper()})
+        existing = await select(db, "events", filter={"code": new_event["code"].strip().upper()})
 
         if existing:
             logger.warning(
@@ -17,7 +17,7 @@ async def add_event(db, new_event: dict, background_tasks: BackgroundTasks):
                                 detail=f"Event with code {new_event['code']} already exists")
         new_event.update({
             "id": str(uuid4()),
-            "code": new_event["code"].upper()
+            "code": new_event["code"].strip().upper()
         })
 
         background_tasks.add_task(insert, db, "events", new_event)
@@ -47,7 +47,7 @@ async def delete_event(db, event_id: str, background_tasks: BackgroundTasks):
 
 async def get_event_by_code(db, event_code: str):
     try:
-        event_code = event_code.upper()
+        event_code = event_code.strip().upper()
         event = await select(db, "events", filter={"code": event_code})
         if not event:
             raise HTTPException(status_code=status.HTTP_404_NOT_FOUND,
@@ -81,7 +81,7 @@ async def get_events(db):
 
 async def update_event(db, event_code: str, payload: dict, background_tasks: BackgroundTasks):
     try:
-        event_code = event_code.upper()
+        event_code = event_code.strip().upper()
         existing = await select(db, "events", filter={"code": event_code})
         if not existing:
             raise HTTPException(status_code=status.HTTP_404_NOT_FOUND,

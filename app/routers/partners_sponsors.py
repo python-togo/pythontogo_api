@@ -24,7 +24,7 @@ api_router = APIRouter(prefix="/partners-sponsors",
 @api_router.post("/inquiry/{event_code}", response_model=MessageResponse, status_code=status.HTTP_202_ACCEPTED)
 async def partnership_sponsorship_inquiry(event_code: str, payload: PartnershipSponsorshipInquiry, background_tasks: BackgroundTasks, db=Depends(get_db_connection)):
     try:
-        event_code = event_code.upper()
+        event_code = event_code.strip().upper()
         payload_dict = payload.model_dump(mode="json")
         result = await add_sponsor_partner(db, payload_dict, event_code, background_tasks)
         return result
@@ -57,7 +57,7 @@ async def get_all_partners_sponsors(db=Depends(get_db_connection)):
 @api_router.get("/all/{event_code}", response_model=list[PartnerSponsorSummary])
 async def get_partners_sponsors(event_code: str, db=Depends(get_db_connection)):
     try:
-        event_code = event_code.upper()
+        event_code = event_code.strip().upper()
         partners_sponsors = await get_sponsors_partners_by_event(db, event_code=event_code)
         if not partners_sponsors:
             raise HTTPException(status_code=status.HTTP_404_NOT_FOUND,

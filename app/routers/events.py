@@ -45,7 +45,7 @@ async def list_events(db=Depends(get_db_connection)):
 @api_router.get("/get/{event_code}", response_model=EventSummary)
 async def get_event(event_code: str, db=Depends(get_db_connection)):
     try:
-        event_code = event_code.upper()
+        event_code = event_code.strip().upper()
         event = await get_event_by_code(db, event_code)
         if not event:
             raise HTTPException(status_code=status.HTTP_404_NOT_FOUND,
@@ -62,7 +62,7 @@ async def get_event(event_code: str, db=Depends(get_db_connection)):
 @api_router.put("/update/{event_code}", response_model=MessageResponse)
 async def update_event_details(event_code: str, event_update: EventUpdate,  background_tasks: BackgroundTasks, db=Depends(get_db_connection),):
     try:
-        event_code = event_code.upper()
+        event_code = event_code.strip().upper()
         event_data_to_update = {
             k: v for k, v in event_update.model_dump(mode="json").items() if v is not None}
         result = await update_event(db, event_code, event_data_to_update, background_tasks)
@@ -79,7 +79,7 @@ async def update_event_details(event_code: str, event_update: EventUpdate,  back
 @api_router.delete("/delete/{event_code}", response_model=MessageResponse)
 async def delete_event_by_code(event_code: str, background_tasks: BackgroundTasks, db=Depends(get_db_connection)):
     try:
-        event_code = event_code.upper()
+        event_code = event_code.strip().upper()
         result = await delete_event(db, event_code, background_tasks)
         return result
     except Exception as e:
