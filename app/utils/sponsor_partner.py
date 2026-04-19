@@ -37,7 +37,7 @@ async def add_sponsor_partner(db, payload: dict, event_code: str, background_tas
             "id": str(uuid4()),
             "event_id": event[0]["id"],
         })
-        print(payload)
+
         background_tasks.add_task(
             insert, db, "sponsors_partners", payload)
         return {"message": f"Company {payload['name']} partnership/sponsorship request received successfully and is being processed"}
@@ -163,7 +163,6 @@ async def get_confirmed_sponsors_partners_by_event(db, event_code: str):
 async def get_sponsors_partners(db):
     try:
         partners = await select(db, "sponsors_partners")
-        print(partners)
         if not partners:
             raise HTTPException(
                 status_code=status.HTTP_404_NOT_FOUND, detail="No sponsors/partners found")
@@ -179,7 +178,6 @@ async def get_sponsors_partners(db):
 async def get_confirmed_sponsors_partners(db):
     try:
         partners = await select(db, "sponsors_partners", filter={"is_confirmed": True})
-        print(partners)
         if not partners:
             raise HTTPException(
                 status_code=status.HTTP_404_NOT_FOUND, detail="No sponsors/partners found")

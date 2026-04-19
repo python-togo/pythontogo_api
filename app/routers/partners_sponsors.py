@@ -81,9 +81,8 @@ async def get_partners_sponsors(event_code: str, db=Depends(get_db_connection)):
                                 detail=f"No partners/sponsors found for event {event_code}")
         return partners_sponsors
     except Exception as e:
-        print(
+        logger.error(
             f"Error retrieving partners/sponsors for event {event_code}: {str(e)}")
-        logger.error(f"Error retrieving partners/sponsors: {str(e)}")
         if isinstance(e, HTTPException):
             raise e
         raise HTTPException(
@@ -100,8 +99,6 @@ async def get_confirmed_partners_sponsors(event_code: str, db=Depends(get_db_con
                                 detail=f"No partners/sponsors found for event {event_code}")
         return partners_sponsors
     except Exception as e:
-        print(
-            f"Error retrieving partners/sponsors for event {event_code}: {str(e)}")
         logger.error(f"Error retrieving partners/sponsors: {str(e)}")
         if isinstance(e, HTTPException):
             raise e

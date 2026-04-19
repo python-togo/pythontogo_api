@@ -1,6 +1,6 @@
 from uuid import uuid4
 
-from app.database.orm import select, insert, update, select_with_join, delete
+from app.database.orm import select, insert, update, delete
 from fastapi import BackgroundTasks, HTTPException, status
 from app.core.settings import logger
 from app.utils.helpers import remove_null_values

@@ -26,9 +26,14 @@ async def get_tracks_by_event(db, event_code):
     """
     try:
         event_code = event_code.strip().upper()
+
         tracks = await select_with_join(db, table="tracks", join_table="events",
-                                        join_condition="tracks.event_id = events.id", filter={"events.code": event_code})
-        logger.info(f"Retrieved tracks for event {event_code}: {tracks}")
+                                        join_condition="tracks.event_id = events.id",
+                                        columns=["tracks.id", "tracks.name_fr", "tracks.name_en",
+                                                 "tracks.description_fr", "tracks.description_en",
+                                                 "tracks.event_id", "tracks.created_at", "tracks.updated_at", "color"],
+                                        filter={"events.code": event_code})
+
         if not tracks:
             raise HTTPException(
                 status_code=404, detail="No tracks found for the specified event or event does not exist")

@@ -1,18 +1,51 @@
 from fastapi import APIRouter, BackgroundTasks, Depends, status, HTTPException
 from app.database.connection import get_db_connection
 from app.utils.proposals import (add_proposal, get_proposals_by_event,
-                                 get_proposal_by_id, get_all_proposals, update_proposal, delete_proposal)
+                                 get_proposal_by_id, get_all_proposals, update_proposal, delete_proposal, save_draft, resume_draft)
 from app.schemas.models import (
     MessageResponse,
     ProposalCreate,
+    ProposalDraft,
     ProposalSummary,
-    ProposalUpdate
+    ProposalUpdate,
+    ResumeDraft,
+    ResumeDraftResponse
 
 )
 from app.core.settings import logger
+from app.utils.helpers import verify_password, hash_password
 
 
 api_router = APIRouter(prefix="/proposals", tags=["proposals"])
+
+
+@api_router.post("/save-draft/{event_code}", response_model=MessageResponse, status_code=status.HTTP_201_CREATED)
+async def save_proposal_draft(draftProposal: ProposalDraft, event_code: str, background_tasks: BackgroundTasks, db=Depends(get_db_connection)):
+    """Save a proposal draft for an event.
+    """
+    try:
+        event_code = event_code.strip().upper()
+        result = await save_draft(db, draftProposal, event_code, background_tasks)
+        return result
+    except Exception as e:
+        logger.error(f"Error saving proposal draft: {str(e)}")
+        if isinstance(e, HTTPException):
+            raise e
+        raise HTTPException(status_code=500, detail="Internal server error")
+
+
+@api_router.post("/resume-draft/{event_code}", response_model=ResumeDraftResponse)
+async def resume_proposal_draft(resumeDraft: ResumeDraft, event_code: str, db=Depends(get_db_connection)):
+    """Resume a saved proposal draft by providing email, password, and event code.
+    """
+    try:
+        result = await resume_draft(db, resumeDraft, event_code)
+        return result
+    except Exception as e:
+        logger.error(f"Error resuming proposal draft: {str(e)}")
+        if isinstance(e, HTTPException):
+            raise e
+        raise HTTPException(status_code=500, detail="Internal server error")
 
 
 @api_router.post("/create/{event_code}", response_model=MessageResponse, status_code=status.HTTP_201_CREATED)

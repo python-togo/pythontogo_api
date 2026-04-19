@@ -1,5 +1,6 @@
 from datetime import date, datetime, timezone
 from enum import Enum
+from typing import Any
 from uuid import UUID
 
 from pydantic import BaseModel, Field, EmailStr, HttpUrl
@@ -215,8 +216,10 @@ class SubmissionStatus(str, Enum):
 
 
 class TrackBase(BaseModel):
-    name: str
-    description: str | None = None
+    name_fr: str
+    name_en: str
+    description_fr: str | None = None
+    description_en: str | None = None
     color: str | None = None
 
 
@@ -232,10 +235,37 @@ class TrackCreate(TrackBase):
 
 
 class TrackUpdate(BaseModel):
-    name: str | None = None
+    name_fr: str | None = None
+    name_en: str | None = None
     event_id: UUID | None = None
-    description: str | None = None
+    description_fr: str | None = None
+    description_en: str | None = None
     color: str | None = None
+    updated_at: datetime = Field(
+        default_factory=lambda: datetime.now(timezone.utc))
+
+
+class TalkTopicBase(BaseModel):
+    name_fr: str
+    name_en: str
+    description_fr: str | None = None
+    description_en: str | None = None
+
+
+class TopicCreate(TalkTopicBase):
+    pass
+
+
+class TopicSummary(TopicCreate):
+    id: UUID
+    event_id: UUID
+    created_at: datetime
+    updated_at: datetime
+
+
+class TopicUpdate(BaseModel):
+    name: str | None = None
+    description: str | None = None
     updated_at: datetime = Field(
         default_factory=lambda: datetime.now(timezone.utc))
 
@@ -244,20 +274,27 @@ class ProposalBase(BaseModel):
     title: str
     description: str
     abstract: str | None = None
-    level: str | None = None
+    topic_id: UUID | None = None
+    format: str
+    python_percentage: int | None = Field(default=None, ge=0, le=100)
+    full_name: str
+    email: EmailStr
+    phone_number: str | None = None
+    organization: str | None = None
+    bio: str
+    country: str
+    experience: str
+    photo_url: str | None = None
+    social_media_links: dict[Any, Any] = Field(default_factory=dict)
     language: str = "French"
-    track_id: UUID = None
-    speaker_full_name: str
-    speaker_email: EmailStr
-    speaker_phone: str | None = None
-    speaker_organization: str | None = None
-    speaker_bio: str | None = None
-    speaker_photo_url: str | None = None
-    speaker_social_links: dict[str, HttpUrl] = Field(default_factory=dict)
-    session_type: SessionType
-    format: DeliveryMethod = DeliveryMethod.ONSITE
+    level: str
     needs_equipment: bool = False
     equipment_details: str | None = None
+    delivery_mode: DeliveryMethod = DeliveryMethod.ONSITE.value
+    status: SubmissionStatus = SubmissionStatus.DRAFT.value
+    agreed_to_code_of_conduct: bool = False
+    agreed_to_privacy_policy: bool = False
+    shared_with_sponsors: bool = False
 
 
 class ProposalCreate(ProposalBase):
@@ -265,53 +302,83 @@ class ProposalCreate(ProposalBase):
 
 
 class ProposalUpdate(BaseModel):
-    title: str = Field(..., description="The title of the proposal")
-    description: str = Field(
-        ..., description="A detailed description of the proposal")
-    abstract: str = Field(
-        ..., description="A brief abstract summarizing the proposal")
-    level: str = Field(
-        ..., description="The intended audience level for the proposal (e.g., Beginner, Intermediate, Advanced)")
-    language: str = Field(
-        ..., description="The language in which the session will be delivered (e.g., English, French)")
-    track_id: UUID = Field(
-        None, description="The ID of the track to which the proposal belongs")
-    speaker_full_name:  str = Field(
-        ..., description="The full name of the speaker submitting the proposal")
-    speaker_email: EmailStr = Field(
-        ..., description="The email address of the speaker submitting the proposal")
-    speaker_phone: str = Field(
-        None, description="The phone number of the speaker submitting the proposal")
-    speaker_organization: str = Field(
-        None, description="The organization or company the speaker is affiliated with")
-    speaker_bio: str = Field(
-        None, description="A short biography of the speaker")
-    speaker_photo_url: HttpUrl = Field(
-        None, description="A URL to a photo of the speaker")
-    speaker_social_links: dict[str, HttpUrl] = Field(
-        None, description="A dictionary of social media links for the speaker (e.g., {'twitter': 'https://twitter.com/speaker'})")
-    session_type: SessionType = Field(
-        None, description="The type of the session (e.g., Talk, Workshop, Panel)")
-    status: SubmissionStatus = Field(
-        None, description="The current status of the proposal (e.g., Draft, Submitted, Accepted, Rejected)")
-    format: DeliveryMethod = Field(
-        None, description="The preferred delivery method for the session (e.g., Onsite, Online, Hybrid)")
-    needs_equipment: bool = Field(
-        None, description="Indicates whether the session requires any special equipment")
-    equipment_details: str = Field(
-        None, description="Details about the equipment needed for the session, if any")
+    title: str | None = None
+    description: str | None = None
+    abstract: str | None = None
+    topic_id: UUID | None = None
+    format: str | None = None
+    python_percentage: int | None = Field(default=None, ge=0, le=100)
+    full_name: str | None = None
+    email: EmailStr | None = None
+    phone_number: str | None = None
+    organization: str | None = None
+    bio: str | None = None
+    country: str | None = None
+    experience: str | None = None
+    photo_url: str | None = None
+    social_media_links: dict[Any, Any] | None = None
+    language: str | None = None
+    level: str | None = None
+    needs_equipment: bool | None = None
+    equipment_details: str | None = None
+    delivery_mode: DeliveryMethod | None = None
+    status: SubmissionStatus | None = None
+    agreed_to_code_of_conduct: bool | None = None
+    agreed_to_privacy_policy: bool | None = None
+    shared_with_sponsors: bool | None = None
     updated_at: datetime = Field(
         default_factory=lambda: datetime.now(timezone.utc))
+
+
+class ProposalDraftData(BaseModel):
+    title: str | None = None
+    description: str | None = None
+    abstract: str | None = None
+    topic_id: UUID | None = None
+    format: str | None = None
+    python_percentage: int | None = Field(default=None, ge=0, le=100)
+    full_name: str | None = None
+    email: EmailStr | None = None
+    phone_number: str | None = None
+    organization: str | None = None
+    bio: str | None = None
+    country: str | None = None
+    experience: str | None = None
+    photo_url: str | None = None
+    social_media_links: dict[Any, Any] | None = None
+    language: str | None = None
+    level: str | None = None
+    needs_equipment: bool | None = None
+    equipment_details: str | None = None
+    delivery_mode: DeliveryMethod | None = None
+    status: SubmissionStatus | None = None
+    agreed_to_code_of_conduct: bool | None = None
+    agreed_to_privacy_policy: bool | None = None
+    shared_with_sponsors: bool | None = None
+
+
+class ProposalDraft(BaseModel):
+    email: str
+    password_hash: str
+    proposal_data: ProposalDraftData
+
+
+class ResumeDraft(BaseModel):
+    email: EmailStr
+    password: str
+
+
+class ResumeDraftResponse(BaseModel):
+    proposal_data: ProposalDraftData
 
 
 class ProposalSummary(ProposalBase):
     id: UUID
     event_id: UUID
-    speaker_email: str = None
-    speaker_photo_url: str | None = None
-    speaker_social_links: dict[str, str] = Field(default_factory=dict)
-    session_type: SessionType
-    status: SubmissionStatus
+    email: str
+    photo_url: str | None = None
+    social_media_links: dict[Any, Any] = Field(default_factory=dict)
+    status: SubmissionStatus = SubmissionStatus.DRAFT
     created_at: datetime
     updated_at: datetime
 
@@ -326,7 +393,7 @@ class SpeakerBase(BaseModel):
     country: str | None = None
     bio: str | None = None
     photo_url: HttpUrl | None = None
-    social_links: dict[str, HttpUrl] = Field(default_factory=dict)
+    social_links: dict[str, str] = Field(default_factory=dict)
     website_url: HttpUrl | None = None
 
 
@@ -397,3 +464,30 @@ class SessionUpdate(BaseModel):
     capacity: int | None = None
     updated_at: datetime = Field(
         default_factory=lambda: datetime.now(timezone.utc))
+
+
+class ProposalFormatBase(BaseModel):
+    name_fr: str
+    name_en: str
+    description_fr: str | None = None
+    description_en: str | None = None
+
+
+class ProposalFormatCreate(ProposalFormatBase):
+    pass
+
+
+class ProposalFormatUpdate(BaseModel):
+    name_fr: str | None = None
+    name_en: str | None = None
+    description_fr: str | None = None
+    description_en: str | None = None
+    updated_at: datetime = Field(
+        default_factory=lambda: datetime.now(timezone.utc))
+
+
+class ProposalFormatSummary(ProposalFormatBase):
+    id: UUID
+    event_id: UUID
+    created_at: datetime
+    updated_at: datetime

@@ -203,33 +203,59 @@ CREATE_TABLE_QUERIES = [
             ON DELETE CASCADE
     );""",
     """
-    CREATE TABLE IF NOT EXISTS proposals (
+    CREATE TABLE IF NOT EXISTS topics (
+        id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+        event_id UUID NOT NULL,
+        name_fr VARCHAR(255) NOT NULL,
+        name_en VARCHAR(255) NOT NULL,
+        description_fr TEXT,
+        description_en TEXT,
+        created_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
+        updated_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
+        CONSTRAINT fk_topics_event
+            FOREIGN KEY (event_id)
+            REFERENCES events(id)
+            ON DELETE CASCADE
+    );""",
+
+    """
+       CREATE TABLE IF NOT EXISTS proposals (
         id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
         event_id UUID NOT NULL,
         title VARCHAR(255) NOT NULL,
         description TEXT NOT NULL,
         abstract TEXT,
-        track_id UUID,
-        speaker_full_name VARCHAR(255) NOT NULL,
-        speaker_email VARCHAR(255) NOT NULL,
-        speaker_phone VARCHAR(40),
-        speaker_organization VARCHAR(255),
-        speaker_bio TEXT,
-        speaker_photo_url TEXT,
-        speaker_social_links JSONB,
-        session_type session_type_enum NOT NULL,
+        topic_id UUID,
+        format VARCHAR(64) NOT NULL,
+        python_percentage INTEGER CHECK (python_percentage >= 0 AND python_percentage <= 100),
+        full_name VARCHAR(255) NOT NULL,
+        email VARCHAR(255) NOT NULL,
+        phone_number VARCHAR(40),
+        organization VARCHAR(255),
+        bio TEXT,
+        country VARCHAR(64),
+        experience TEXT,
+        photo_url TEXT,
+        social_media_links JSONB,
         language VARCHAR(64) NOT NULL DEFAULT 'French',
         level VARCHAR(64),
         needs_equipment BOOLEAN NOT NULL DEFAULT FALSE,
         equipment_details TEXT,
-        format delivery_method_enum NOT NULL DEFAULT 'onsite',
+        delivery_mode delivery_method_enum NOT NULL DEFAULT 'onsite',
         status submission_status_enum NOT NULL DEFAULT 'draft',
+        agreed_to_code_of_conduct BOOLEAN NOT NULL DEFAULT FALSE,
+        agreed_to_privacy_policy BOOLEAN NOT NULL DEFAULT FALSE,
+        shared_with_sponsors BOOLEAN NOT NULL DEFAULT FALSE,
         created_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
         updated_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
         CONSTRAINT fk_proposals_event
             FOREIGN KEY (event_id)
             REFERENCES events(id)
-            ON DELETE CASCADE
+            ON DELETE CASCADE,
+        CONSTRAINT fk_proposals_topic
+            FOREIGN KEY (topic_id)
+            REFERENCES topics(id)
+            ON DELETE SET NULL
     );""",
     """
     CREATE TABLE IF NOT EXISTS speakers (
@@ -291,6 +317,36 @@ CREATE_TABLE_QUERIES = [
             REFERENCES speakers(id)
             ON DELETE SET NULL,
         CHECK (ends_at > starts_at)
+    );""",
+    """
+    CREATE TABLE IF NOT EXISTS draft_proposals (
+        id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+        event_id UUID NOT NULL,
+        email VARCHAR(255) NOT NULL,
+        password_hash TEXT NOT NULL,
+        proposal_data JSONB NOT NULL,
+        created_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
+        updated_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
+        CONSTRAINT fk_draft_proposals_event
+            FOREIGN KEY (event_id)
+            REFERENCES events(id)
+            ON DELETE CASCADE
+    );""",
+
+    """
+    CREATE TABLE IF NOT EXISTS proposal_formats (
+        id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+        event_id UUID NOT NULL,
+        name_fr VARCHAR(255) NOT NULL,
+        name_en VARCHAR(255) NOT NULL,
+        description_fr TEXT,
+        description_en TEXT,
+        created_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
+        updated_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
+        CONSTRAINT fk_proposal_formats_event
+            FOREIGN KEY (event_id)
+            REFERENCES events(id)
+            ON DELETE CASCADE
     );""",
 ]
 
