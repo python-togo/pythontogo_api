@@ -118,6 +118,45 @@ class ContactMessageUpdate(BaseModel):
         default_factory=lambda: datetime.now(timezone.utc))
 
 
+class UserRole(str, Enum):
+    ADMIN = "admin"
+    MEMBER = "member"
+    STAFF = "staff"
+
+
+class UserCreate(BaseModel):
+    username: str
+    email: EmailStr
+    password: str
+    full_name: str | None = None
+
+
+class UserLogin(BaseModel):
+    email: EmailStr
+    password: str
+
+
+class UserSummary(BaseModel):
+    id: UUID
+    username: str
+    email: str
+    full_name: str | None = None
+    role: UserRole
+    is_active: bool
+    created_at: datetime
+
+
+class TokenResponse(BaseModel):
+    access_token: str
+    refresh_token: str
+    token_type: str = "bearer"
+
+
+class TokenData(BaseModel):
+    user_id: str | None = None
+    email: str | None = None
+
+
 class APIKeyResponse(BaseModel):
     api_key: str
 

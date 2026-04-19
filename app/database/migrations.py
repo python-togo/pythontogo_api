@@ -86,6 +86,10 @@ BEGIN
             'manual_correction'
         );
     END IF;
+
+    IF NOT EXISTS (SELECT 1 FROM pg_type WHERE typname = 'user_role_enum') THEN
+        CREATE TYPE user_role_enum AS ENUM ('admin', 'member', 'staff');
+    END IF;
 END
 $$;
 """
@@ -260,6 +264,20 @@ CREATE_TABLE_QUERIES = [
     );""",
 
     """
+    CREATE TABLE IF NOT EXISTS users (
+        id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+        username VARCHAR(100) NOT NULL UNIQUE,
+        email VARCHAR(255) NOT NULL UNIQUE,
+        full_name VARCHAR(255),
+        password_hash TEXT NOT NULL,
+        role user_role_enum NOT NULL DEFAULT 'member',
+        is_active BOOLEAN NOT NULL DEFAULT TRUE,
+        created_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
+        updated_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
+    );
+    """,
+
+    """
     CREATE TABLE IF NOT EXISTS sessions (
         id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
         event_id UUID NOT NULL,
@@ -298,6 +316,7 @@ CREATE_TABLE_QUERIES = [
 CREATE_INDEX_QUERIES = [
     "CREATE INDEX IF NOT EXISTS idx_sponsors_partners_event_id ON sponsors_partners(event_id);",
     "CREATE INDEX IF NOT EXISTS idx_api_keys_event_id ON api_keys(event_id);",
+    "CREATE INDEX IF NOT EXISTS idx_users_email ON users(email);",
 ]
 
 
