@@ -7,6 +7,7 @@ import redis.asyncio as redis
 from app.core.settings import settings
 from app.routers.api import api_routers
 from app.routers.auth import api_router as auth_router
+from app.routers.shop.api import shop_router, client_shop_router
 
 origins = []
 if settings.env == "development":
@@ -81,4 +82,6 @@ async def favicon():
     return FileResponse("app/static/favicon.ico")
 
 app.include_router(auth_router, prefix="/api/v2")
+app.include_router(shop_router, prefix="/api/v2")
+app.include_router(client_shop_router, prefix="/api/v2")
 app.include_router(api_routers)

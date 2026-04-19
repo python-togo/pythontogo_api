@@ -90,6 +90,20 @@ BEGIN
     IF NOT EXISTS (SELECT 1 FROM pg_type WHERE typname = 'user_role_enum') THEN
         CREATE TYPE user_role_enum AS ENUM ('admin', 'member', 'staff');
     END IF;
+
+    IF NOT EXISTS (SELECT 1 FROM pg_type WHERE typname = 'order_status_enum') THEN
+        CREATE TYPE order_status_enum AS ENUM (
+            'pending',
+            'paid',
+            'shipped',
+            'delivered',
+            'cancelled'
+        );
+    END IF;
+
+    IF NOT EXISTS (SELECT 1 FROM pg_type WHERE typname = 'coupon_type_enum') THEN
+        CREATE TYPE coupon_type_enum AS ENUM ('percentage', 'fixed_amount');
+    END IF;
 END
 $$;
 """
@@ -310,6 +324,149 @@ CREATE_TABLE_QUERIES = [
             ON DELETE SET NULL,
         CHECK (ends_at > starts_at)
     );""",
+
+    """
+    CREATE TABLE IF NOT EXISTS categories (
+        id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+        name VARCHAR(255) NOT NULL,
+        slug VARCHAR(255) NOT NULL UNIQUE,
+        description TEXT,
+        parent_id UUID,
+        is_active BOOLEAN NOT NULL DEFAULT TRUE,
+        created_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
+        updated_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
+        CONSTRAINT fk_categories_parent
+            FOREIGN KEY (parent_id)
+            REFERENCES categories(id)
+            ON DELETE SET NULL
+    );
+    """,
+
+    """
+    CREATE TABLE IF NOT EXISTS products (
+        id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+        event_id UUID NOT NULL,
+        category_id UUID,
+        name VARCHAR(255) NOT NULL,
+        slug VARCHAR(255) NOT NULL UNIQUE,
+        description TEXT,
+        image_url TEXT,
+        base_price NUMERIC(10, 2) NOT NULL DEFAULT 0,
+        is_active BOOLEAN NOT NULL DEFAULT TRUE,
+        created_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
+        updated_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
+        CONSTRAINT fk_products_event
+            FOREIGN KEY (event_id)
+            REFERENCES events(id)
+            ON DELETE CASCADE,
+        CONSTRAINT fk_products_category
+            FOREIGN KEY (category_id)
+            REFERENCES categories(id)
+            ON DELETE SET NULL
+    );
+    """,
+
+    """
+    CREATE TABLE IF NOT EXISTS product_variants (
+        id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+        product_id UUID NOT NULL,
+        name VARCHAR(255) NOT NULL,
+        sku VARCHAR(100) NOT NULL UNIQUE,
+        price_override NUMERIC(10, 2),
+        stock_quantity INT NOT NULL DEFAULT 0,
+        attributes JSONB DEFAULT '{}',
+        is_active BOOLEAN NOT NULL DEFAULT TRUE,
+        created_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
+        updated_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
+        CONSTRAINT fk_variants_product
+            FOREIGN KEY (product_id)
+            REFERENCES products(id)
+            ON DELETE CASCADE
+    );
+    """,
+
+    """
+    CREATE TABLE IF NOT EXISTS coupons (
+        id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+        event_id UUID,
+        code VARCHAR(50) NOT NULL UNIQUE,
+        type coupon_type_enum NOT NULL,
+        value NUMERIC(10, 2) NOT NULL,
+        max_uses INT,
+        uses_count INT NOT NULL DEFAULT 0,
+        expires_at TIMESTAMPTZ,
+        is_active BOOLEAN NOT NULL DEFAULT TRUE,
+        created_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
+        updated_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
+        CONSTRAINT fk_coupons_event
+            FOREIGN KEY (event_id)
+            REFERENCES events(id)
+            ON DELETE SET NULL
+    );
+    """,
+
+    """
+    CREATE TABLE IF NOT EXISTS shop_orders (
+        id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+        event_id UUID NOT NULL,
+        user_id UUID NOT NULL,
+        coupon_id UUID,
+        status order_status_enum NOT NULL DEFAULT 'pending',
+        total_amount NUMERIC(10, 2) NOT NULL DEFAULT 0,
+        discount_amount NUMERIC(10, 2) NOT NULL DEFAULT 0,
+        shipping_address JSONB DEFAULT '{}',
+        created_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
+        updated_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
+        CONSTRAINT fk_orders_event
+            FOREIGN KEY (event_id)
+            REFERENCES events(id)
+            ON DELETE RESTRICT,
+        CONSTRAINT fk_orders_user
+            FOREIGN KEY (user_id)
+            REFERENCES users(id)
+            ON DELETE RESTRICT,
+        CONSTRAINT fk_orders_coupon
+            FOREIGN KEY (coupon_id)
+            REFERENCES coupons(id)
+            ON DELETE SET NULL
+    );
+    """,
+
+    """
+    CREATE TABLE IF NOT EXISTS order_items (
+        id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+        order_id UUID NOT NULL,
+        product_variant_id UUID NOT NULL,
+        quantity INT NOT NULL DEFAULT 1,
+        unit_price NUMERIC(10, 2) NOT NULL,
+        created_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
+        CONSTRAINT fk_items_order
+            FOREIGN KEY (order_id)
+            REFERENCES shop_orders(id)
+            ON DELETE CASCADE,
+        CONSTRAINT fk_items_variant
+            FOREIGN KEY (product_variant_id)
+            REFERENCES product_variants(id)
+            ON DELETE RESTRICT
+    );
+    """,
+
+    """
+    CREATE TABLE IF NOT EXISTS shop_payments (
+        id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+        order_id UUID NOT NULL UNIQUE,
+        amount NUMERIC(10, 2) NOT NULL,
+        status payment_status_enum NOT NULL DEFAULT 'pending',
+        method VARCHAR(100),
+        reference VARCHAR(255),
+        created_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
+        updated_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
+        CONSTRAINT fk_payments_order
+            FOREIGN KEY (order_id)
+            REFERENCES shop_orders(id)
+            ON DELETE CASCADE
+    );
+    """,
 ]
 
 
@@ -317,6 +474,12 @@ CREATE_INDEX_QUERIES = [
     "CREATE INDEX IF NOT EXISTS idx_sponsors_partners_event_id ON sponsors_partners(event_id);",
     "CREATE INDEX IF NOT EXISTS idx_api_keys_event_id ON api_keys(event_id);",
     "CREATE INDEX IF NOT EXISTS idx_users_email ON users(email);",
+    "CREATE INDEX IF NOT EXISTS idx_products_event_id ON products(event_id);",
+    "CREATE INDEX IF NOT EXISTS idx_products_slug ON products(slug);",
+    "CREATE INDEX IF NOT EXISTS idx_variants_product_id ON product_variants(product_id);",
+    "CREATE INDEX IF NOT EXISTS idx_orders_event_id ON shop_orders(event_id);",
+    "CREATE INDEX IF NOT EXISTS idx_orders_user_id ON shop_orders(user_id);",
+    "CREATE INDEX IF NOT EXISTS idx_order_items_order_id ON order_items(order_id);",
 ]
 
 

@@ -4,7 +4,7 @@ from typing import Annotated
 from app.database.connection import get_db_connection, get_redis_client
 from app.database.orm import select
 from json import dumps, loads
-from app.schemas.models import APIKeyResponse, APIKeyVerificationResponse, TokenData, UserSummary
+from app.schemas.models import APIKeyResponse, APIKeyVerificationResponse, TokenData, UserSummary, UserRole
 from app.core.settings import settings
 from passlib.context import CryptContext
 from datetime import datetime, timedelta, timezone
@@ -63,6 +63,12 @@ async def get_current_user(
     if not user["is_active"]:
         raise HTTPException(status_code=status.HTTP_403_FORBIDDEN, detail="Inactive user")
     return UserSummary(**user)
+
+
+async def require_admin(current_user: Annotated[UserSummary, Depends(get_current_user)]) -> UserSummary:
+    if current_user.role not in (UserRole.ADMIN, UserRole.STAFF):
+        raise HTTPException(status_code=status.HTTP_403_FORBIDDEN, detail="Admin access required")
+    return current_user
 
 
 def generate_api_key():
