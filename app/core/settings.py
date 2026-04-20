@@ -26,5 +26,9 @@ settings = Config(
     smtp_server=config("SMTP_SERVER", default="smtp.example.com"),
     smtp_port=config("SMTP_PORT", default=587, cast=int),
     smtp_user=config("SMTP_USER", default="user"),
-    smtp_password=config("SMTP_PASSWORD", default="password")
+    smtp_password=config("SMTP_PASSWORD", default="password"),
+    cloudinary_cloud_name=config("CLOUDINARY_CLOUD_NAME", default=""),
+    cloudinary_api_key=config("CLOUDINARY_API_KEY", default=""),
+    cloudinary_api_secret=config("CLOUDINARY_API_SECRET", default=""),
+    cloudinary_folder=config("CLOUDINARY_FOLDER", default="pythontogo"),
 )

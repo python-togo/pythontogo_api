@@ -8,6 +8,8 @@ from app.core.settings import settings
 from app.routers.api import api_routers
 from app.routers.auth import api_router as auth_router
 from app.routers.shop.api import shop_router, client_shop_router
+from app.routers.admin.api import admin_router
+from app.routers.registrations import api_router as registrations_router
 
 origins = []
 if settings.env == "development":
@@ -84,4 +86,6 @@ async def favicon():
 app.include_router(auth_router, prefix="/api/v2")
 app.include_router(shop_router, prefix="/api/v2")
 app.include_router(client_shop_router, prefix="/api/v2")
+app.include_router(admin_router, prefix="/api/v2")
+app.include_router(registrations_router, prefix="/api/v2")
 app.include_router(api_routers)

@@ -1,4 +1,5 @@
 from datetime import date, datetime, timezone
+from decimal import Decimal
 from enum import Enum
 from uuid import UUID
 
@@ -61,6 +62,7 @@ class PartnerSponsorSummary(SponsorPartnerBase):
     website_url: str = None
     contact_email: str
     package_tier: PackageTier | None = None
+    package_id: UUID | None = None
     is_confirmed: bool = False
     created_at: datetime
     updated_at: datetime
@@ -81,7 +83,45 @@ class PartnerSponsorUpdate(BaseModel):
     logo_url: str | None = None
     partner_type: PartnerType | None = None
     package_tier: PackageTier | None = None
+    package_id: UUID | None = None
     is_confirmed: bool | None = None
+
+
+# ── Sponsor packages ──────────────────────────────────────────────────────────
+
+class SponsorPackageCreate(BaseModel):
+    name: str
+    tier: PackageTier
+    description: str | None = None
+    price: Decimal = Decimal("0.00")
+    benefits: list[str] = Field(default_factory=list)
+    max_slots: int | None = None
+    is_active: bool = True
+
+
+class SponsorPackageUpdate(BaseModel):
+    name: str | None = None
+    description: str | None = None
+    price: Decimal | None = None
+    benefits: list[str] | None = None
+    max_slots: int | None = None
+    is_active: bool | None = None
+    updated_at: datetime = Field(default_factory=lambda: datetime.now(timezone.utc))
+
+
+class SponsorPackageSummary(BaseModel):
+    id: UUID
+    event_id: UUID
+    name: str
+    tier: PackageTier
+    description: str | None = None
+    price: Decimal
+    benefits: list[str]
+    max_slots: int | None = None
+    slots_used: int = 0
+    is_active: bool
+    created_at: datetime
+    updated_at: datetime
     updated_at: datetime = Field(
         default_factory=lambda: datetime.now(timezone.utc))
 
@@ -164,6 +204,168 @@ class APIKeyResponse(BaseModel):
 class APIKeyVerificationResponse(BaseModel):
     is_valid: bool
     message: str | None = None
+
+
+# ── Security dashboard ────────────────────────────────────────────────────────
+
+class APIKeySummaryAdmin(BaseModel):
+    id: UUID
+    name: str
+    key_masked: str
+    event_id: UUID | None
+    event_code: str | None
+    created_at: datetime
+    is_cached: bool
+
+
+class ActiveSession(BaseModel):
+    user_id: str
+    email: str | None
+    expires_in_seconds: int
+
+
+class SecurityOverview(BaseModel):
+    total_api_keys: int
+    active_sessions: int
+    cached_api_keys: int
+    active_carts: int
+
+
+# ── Outreach dashboard ────────────────────────────────────────────────────────
+
+class OutreachOverview(BaseModel):
+    unresolved_contacts: int
+    unconfirmed_partners: int
+    total_contacts: int
+    total_partners: int
+    partners_by_type: dict[str, int]
+    partners_by_tier: dict[str, int]
+
+
+# ── Events dashboard ──────────────────────────────────────────────────────────
+
+class EventDashboardItem(BaseModel):
+    id: UUID
+    code: str
+    title: str
+    start_date: date
+    end_date: date
+    is_active: bool
+    cfp_is_open: bool
+    total_proposals: int
+    accepted_proposals: int
+    acceptance_rate: float
+    confirmed_sponsors: int
+    total_speakers: int
+    total_sessions: int
+
+
+class EventsDashboardOverview(BaseModel):
+    total_events: int
+    active_events: int
+    events: list[EventDashboardItem]
+
+
+# ── Proposals dashboard ───────────────────────────────────────────────────────
+
+class ProposalsDashboardOverview(BaseModel):
+    total_proposals: int
+    by_status: dict[str, int]
+    by_session_type: dict[str, int]
+    without_track: int
+
+
+# ── Users dashboard ───────────────────────────────────────────────────────────
+
+class UsersDashboardOverview(BaseModel):
+    total_users: int
+    active_users: int
+    inactive_users: int
+    new_last_7_days: int
+    by_role: dict[str, int]
+
+
+# ── Global overview ───────────────────────────────────────────────────────────
+
+# ── Registrations ─────────────────────────────────────────────────────────────
+
+class RegistrationStatus(str, Enum):
+    PENDING = "pending"
+    CONFIRMED = "confirmed"
+    CANCELLED = "cancelled"
+    CHECKED_IN = "checked_in"
+
+
+class RegistrationBase(BaseModel):
+    full_name: str
+    email: EmailStr
+    phone: str | None = None
+    organization: str | None = None
+    ticket_type: str = "general"
+
+
+class RegistrationCreate(RegistrationBase):
+    pass
+
+
+class RegistrationUpdate(BaseModel):
+    full_name: str | None = None
+    phone: str | None = None
+    organization: str | None = None
+    ticket_type: str | None = None
+    notes: str | None = None
+    updated_at: datetime = Field(default_factory=lambda: datetime.now(timezone.utc))
+
+
+class RegistrationStatusUpdate(BaseModel):
+    status: RegistrationStatus
+
+
+class RegistrationSummary(RegistrationBase):
+    id: UUID
+    event_id: UUID
+    user_id: UUID | None = None
+    email: str
+    status: RegistrationStatus
+    checked_in_at: datetime | None = None
+    notes: str | None = None
+    created_at: datetime
+    updated_at: datetime
+
+
+class RegistrationsDashboard(BaseModel):
+    total: int
+    by_status: dict[str, int]
+    by_ticket_type: dict[str, int]
+    checked_in_today: int
+
+
+class GlobalOverview(BaseModel):
+    # users
+    total_users: int
+    active_users: int
+    new_users_last_7_days: int
+    users_by_role: dict[str, int]
+    # events
+    total_events: int
+    active_events: int
+    past_events: int
+    # proposals
+    total_proposals: int
+    pending_proposals: int
+    # participants
+    total_registrations: int
+    confirmed_registrations: int
+    # outreach
+    unresolved_contacts: int
+    unconfirmed_partners: int
+    # shop
+    total_orders: int
+    orders_by_status: dict[str, int]
+    total_revenue: Decimal
+    revenue_current_month: Decimal
+    # security
+    active_sessions: int
 
 
 # event
@@ -400,21 +602,21 @@ class SpeakerUpdate(BaseModel):
 
 
 class SessionBase(BaseModel):
-    event_id: UUID | None = None
     track_id: UUID | None = None
-    venue_id: UUID | None = None
+    venue_id: UUID
     proposal_id: UUID | None = None
+    speaker_id: UUID | None = None
     title: str
     slug: str
     session_type: SessionType
     starts_at: datetime
     ends_at: datetime
-    summary: str | None = None
-    capacity: int | None = None
+    description: str | None = None
 
 
 class SessionSummary(SessionBase):
     id: UUID
+    event_id: UUID
     created_at: datetime
     updated_at: datetime
 
@@ -427,12 +629,12 @@ class SessionUpdate(BaseModel):
     track_id: UUID | None = None
     venue_id: UUID | None = None
     proposal_id: UUID | None = None
+    speaker_id: UUID | None = None
     title: str | None = None
     slug: str | None = None
     session_type: SessionType | None = None
     starts_at: datetime | None = None
     ends_at: datetime | None = None
-    summary: str | None = None
-    capacity: int | None = None
+    description: str | None = None
     updated_at: datetime = Field(
         default_factory=lambda: datetime.now(timezone.utc))

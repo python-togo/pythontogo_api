@@ -219,6 +219,43 @@ class DashboardStats(BaseModel):
     recent_orders: list[OrderSummary] = Field(default_factory=list)
 
 
+class TopProduct(BaseModel):
+    product_id: UUID
+    product_name: str
+    total_sold: int
+    total_revenue: Decimal
+
+
+class LowStockVariant(BaseModel):
+    variant_id: UUID
+    product_id: UUID
+    product_name: str
+    variant_name: str
+    sku: str
+    stock_quantity: int
+
+
+class CouponUsageSummary(CouponSummary):
+    usage_rate: float
+
+
+class PendingOrderAlert(BaseModel):
+    order_id: UUID
+    user_id: UUID
+    total_amount: Decimal
+    pending_since_days: int
+    created_at: datetime
+
+
+class ShopAnalyticsOverview(BaseModel):
+    orders_by_status: dict[str, int]
+    revenue_current_month: Decimal
+    top_products: list[TopProduct]
+    low_stock_variants: list[LowStockVariant]
+    coupons: list[CouponUsageSummary]
+    pending_alerts: list[PendingOrderAlert]
+
+
 # ── Cart (Redis session) ──────────────────────────────────────────────────────
 
 class CartItem(BaseModel):

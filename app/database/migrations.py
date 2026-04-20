@@ -326,6 +326,54 @@ CREATE_TABLE_QUERIES = [
     );""",
 
     """
+    CREATE TABLE IF NOT EXISTS registrations (
+        id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+        event_id UUID NOT NULL,
+        user_id UUID,
+        full_name VARCHAR(255) NOT NULL,
+        email VARCHAR(255) NOT NULL,
+        phone VARCHAR(40),
+        organization VARCHAR(255),
+        ticket_type VARCHAR(100) NOT NULL DEFAULT 'general',
+        status registration_status_enum NOT NULL DEFAULT 'pending',
+        checked_in_at TIMESTAMPTZ,
+        notes TEXT,
+        created_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
+        updated_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
+        CONSTRAINT fk_registrations_event
+            FOREIGN KEY (event_id)
+            REFERENCES events(id)
+            ON DELETE CASCADE,
+        CONSTRAINT fk_registrations_user
+            FOREIGN KEY (user_id)
+            REFERENCES users(id)
+            ON DELETE SET NULL,
+        CONSTRAINT uq_registrations_event_email UNIQUE (event_id, email)
+    );
+    """,
+
+    """
+    CREATE TABLE IF NOT EXISTS sponsor_packages (
+        id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+        event_id UUID NOT NULL,
+        name VARCHAR(255) NOT NULL,
+        tier package_tier_enum NOT NULL,
+        description TEXT,
+        price NUMERIC(10, 2) NOT NULL DEFAULT 0,
+        benefits JSONB DEFAULT '[]',
+        max_slots INT,
+        is_active BOOLEAN NOT NULL DEFAULT TRUE,
+        created_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
+        updated_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
+        CONSTRAINT fk_sponsor_packages_event
+            FOREIGN KEY (event_id)
+            REFERENCES events(id)
+            ON DELETE CASCADE,
+        CONSTRAINT uq_sponsor_packages_event_tier UNIQUE (event_id, tier)
+    );
+    """,
+
+    """
     CREATE TABLE IF NOT EXISTS categories (
         id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
         name VARCHAR(255) NOT NULL,
@@ -471,6 +519,9 @@ CREATE_TABLE_QUERIES = [
 
 
 CREATE_INDEX_QUERIES = [
+    "CREATE INDEX IF NOT EXISTS idx_sponsor_packages_event_id ON sponsor_packages(event_id);",
+    "CREATE INDEX IF NOT EXISTS idx_registrations_event_id ON registrations(event_id);",
+    "CREATE INDEX IF NOT EXISTS idx_registrations_email ON registrations(email);",
     "CREATE INDEX IF NOT EXISTS idx_sponsors_partners_event_id ON sponsors_partners(event_id);",
     "CREATE INDEX IF NOT EXISTS idx_api_keys_event_id ON api_keys(event_id);",
     "CREATE INDEX IF NOT EXISTS idx_users_email ON users(email);",
@@ -485,6 +536,7 @@ CREATE_INDEX_QUERIES = [
 
 ALTER_TABLE_QUERIES = [
     "ALTER TABLE sponsors_partners ADD COLUMN IF NOT EXISTS package_tier package_tier_enum;",
+    "ALTER TABLE sponsors_partners ADD COLUMN IF NOT EXISTS package_id UUID REFERENCES sponsor_packages(id) ON DELETE SET NULL;",
 ]
 
 
