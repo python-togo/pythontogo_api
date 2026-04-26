@@ -9,6 +9,8 @@ from app.routers.admin.registrations import api_router as registrations_router
 from app.routers.admin.speakers import api_router as speakers_router
 from app.routers.sessions import router as sessions_router
 from app.routers.admin.sponsor_packages import api_router as sponsor_packages_router
+from app.routers.admin.rbac import api_router as rbac_router
+from app.routers.admin.cfp_review import api_router as cfp_review_router
 
 admin_router = APIRouter(prefix="/admin")
 admin_router.include_router(overview_router)
@@ -21,3 +23,5 @@ admin_router.include_router(registrations_router)
 admin_router.include_router(speakers_router)
 admin_router.include_router(sessions_router)
 admin_router.include_router(sponsor_packages_router)
+admin_router.include_router(rbac_router)
+admin_router.include_router(cfp_review_router)

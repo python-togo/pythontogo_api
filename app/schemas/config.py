@@ -22,7 +22,17 @@ class Config(BaseModel):
     smtp_port: int = 587
     smtp_user: str = "user"
     smtp_password: str = "password"
+    smtp_from_email: str = "no-reply@example.com"
+    smtp_from_name: str = "Python Togo"
     cloudinary_cloud_name: str = ""
     cloudinary_api_key: str = ""
     cloudinary_api_secret: str = ""
     cloudinary_folder: str = "pythontogo"
+    db_pool_min_size: int = 1
+    db_pool_max_size: int = 5
+    db_pool_timeout: int = 10
+    db_ssl_mode: str = "require"
+    superadmin_email: str = "superadmin@pytogo.org"
+    superadmin_username: str = "superadmin"
+    superadmin_password: str = "ChangeMe!2025"
+    superadmin_full_name: str = "Super Admin"

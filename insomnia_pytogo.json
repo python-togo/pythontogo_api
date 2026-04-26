@@ -1,0 +1,3157 @@
+{
+  "_type": "export",
+  "__export_format": 4,
+  "__export_date": "2026-04-26T00:00:00.000Z",
+  "__export_source": "insomnia.desktop.app:v2023.5.8",
+  "resources": [
+    {
+      "_id": "wrk_pytogo",
+      "_type": "workspace",
+      "parentId": null,
+      "modified": 1714089600000,
+      "created": 1714089600000,
+      "name": "Python Togo API v2.1.0",
+      "description": "API compl\u00e8te Python Togo Community Platform",
+      "scope": "collection"
+    },
+    {
+      "_id": "env_pytogo",
+      "_type": "environment",
+      "parentId": "wrk_pytogo",
+      "modified": 1714089600000,
+      "created": 1714089600000,
+      "name": "Dev \u2014 localhost",
+      "data": {
+        "base_url": "http://localhost:8000",
+        "access_token": "PASTE_YOUR_ACCESS_TOKEN_HERE",
+        "refresh_token": "PASTE_YOUR_REFRESH_TOKEN_HERE",
+        "api_key": "PASTE_YOUR_API_KEY_HERE",
+        "event_code": "PYTOGO2025",
+        "event_id": "00000000-0000-0000-0000-000000000001",
+        "proposal_id": "00000000-0000-0000-0000-000000000002",
+        "track_id": "00000000-0000-0000-0000-000000000003",
+        "contact_id": "00000000-0000-0000-0000-000000000004",
+        "partner_id": "00000000-0000-0000-0000-000000000005",
+        "speaker_id": "00000000-0000-0000-0000-000000000006",
+        "session_id": "00000000-0000-0000-0000-000000000007",
+        "registration_id": "00000000-0000-0000-0000-000000000008",
+        "package_id": "00000000-0000-0000-0000-000000000009",
+        "role_id": "00000000-0000-0000-0000-000000000010",
+        "permission_id": "00000000-0000-0000-0000-000000000011",
+        "user_id": "00000000-0000-0000-0000-000000000012",
+        "product_id": "00000000-0000-0000-0000-000000000013",
+        "variant_id": "00000000-0000-0000-0000-000000000014",
+        "category_id": "00000000-0000-0000-0000-000000000015",
+        "order_id": "00000000-0000-0000-0000-000000000016",
+        "coupon_id": "00000000-0000-0000-0000-000000000017",
+        "customer_id": "00000000-0000-0000-0000-000000000018",
+        "payment_id": "00000000-0000-0000-0000-000000000019",
+        "sponsor_id": "00000000-0000-0000-0000-000000000020"
+      },
+      "color": null,
+      "isPrivate": false,
+      "metaSortKey": 1714089600000
+    },
+    {
+      "_id": "fld_health",
+      "_type": "request_group",
+      "parentId": "wrk_pytogo",
+      "name": "\u2764\ufe0f Health",
+      "metaSortKey": -110
+    },
+    {
+      "_id": "req_000",
+      "_type": "request",
+      "parentId": "fld_health",
+      "name": "Health Check (DB + Redis)",
+      "method": "GET",
+      "url": "{{ base_url }}/api/v2/health",
+      "headers": [],
+      "body": {},
+      "metaSortKey": -1
+    },
+    {
+      "_id": "fld_auth",
+      "_type": "request_group",
+      "parentId": "wrk_pytogo",
+      "name": "\ud83d\udd10 Auth",
+      "metaSortKey": -100
+    },
+    {
+      "_id": "fld_public",
+      "_type": "request_group",
+      "parentId": "wrk_pytogo",
+      "name": "\ud83c\udf10 Public API (API Key)",
+      "metaSortKey": -90
+    },
+    {
+      "_id": "fld_partners",
+      "_type": "request_group",
+      "parentId": "fld_public",
+      "name": "Partners & Sponsors",
+      "metaSortKey": -10
+    },
+    {
+      "_id": "fld_contacts",
+      "_type": "request_group",
+      "parentId": "fld_public",
+      "name": "Contacts",
+      "metaSortKey": -9
+    },
+    {
+      "_id": "fld_events_pub",
+      "_type": "request_group",
+      "parentId": "fld_public",
+      "name": "Events",
+      "metaSortKey": -8
+    },
+    {
+      "_id": "fld_proposals_pub",
+      "_type": "request_group",
+      "parentId": "fld_public",
+      "name": "Proposals (CFP)",
+      "metaSortKey": -7
+    },
+    {
+      "_id": "fld_tracks_pub",
+      "_type": "request_group",
+      "parentId": "fld_public",
+      "name": "Tracks",
+      "metaSortKey": -6
+    },
+    {
+      "_id": "fld_registrations",
+      "_type": "request_group",
+      "parentId": "wrk_pytogo",
+      "name": "\ud83c\udf9f\ufe0f Registrations (JWT)",
+      "metaSortKey": -80
+    },
+    {
+      "_id": "fld_shop_public",
+      "_type": "request_group",
+      "parentId": "wrk_pytogo",
+      "name": "\ud83d\uded2 Shop \u2014 Public + Cart (JWT)",
+      "metaSortKey": -70
+    },
+    {
+      "_id": "fld_admin_shop",
+      "_type": "request_group",
+      "parentId": "wrk_pytogo",
+      "name": "\ud83c\udfea Admin Shop (JWT + Admin)",
+      "metaSortKey": -60
+    },
+    {
+      "_id": "fld_shop_dash",
+      "_type": "request_group",
+      "parentId": "fld_admin_shop",
+      "name": "Dashboard",
+      "metaSortKey": -10
+    },
+    {
+      "_id": "fld_shop_cat",
+      "_type": "request_group",
+      "parentId": "fld_admin_shop",
+      "name": "Categories",
+      "metaSortKey": -9
+    },
+    {
+      "_id": "fld_shop_prod",
+      "_type": "request_group",
+      "parentId": "fld_admin_shop",
+      "name": "Products & Variants",
+      "metaSortKey": -8
+    },
+    {
+      "_id": "fld_shop_ord",
+      "_type": "request_group",
+      "parentId": "fld_admin_shop",
+      "name": "Orders",
+      "metaSortKey": -7
+    },
+    {
+      "_id": "fld_shop_cust",
+      "_type": "request_group",
+      "parentId": "fld_admin_shop",
+      "name": "Customers",
+      "metaSortKey": -6
+    },
+    {
+      "_id": "fld_shop_pay",
+      "_type": "request_group",
+      "parentId": "fld_admin_shop",
+      "name": "Payments",
+      "metaSortKey": -5
+    },
+    {
+      "_id": "fld_shop_coup",
+      "_type": "request_group",
+      "parentId": "fld_admin_shop",
+      "name": "Coupons",
+      "metaSortKey": -4
+    },
+    {
+      "_id": "fld_admin",
+      "_type": "request_group",
+      "parentId": "wrk_pytogo",
+      "name": "\u2699\ufe0f Admin (JWT + Admin)",
+      "metaSortKey": -50
+    },
+    {
+      "_id": "fld_adm_overview",
+      "_type": "request_group",
+      "parentId": "fld_admin",
+      "name": "Overview",
+      "metaSortKey": -20
+    },
+    {
+      "_id": "fld_adm_security",
+      "_type": "request_group",
+      "parentId": "fld_admin",
+      "name": "Security",
+      "metaSortKey": -19
+    },
+    {
+      "_id": "fld_adm_users",
+      "_type": "request_group",
+      "parentId": "fld_admin",
+      "name": "Users",
+      "metaSortKey": -18
+    },
+    {
+      "_id": "fld_adm_outreach",
+      "_type": "request_group",
+      "parentId": "fld_admin",
+      "name": "Outreach",
+      "metaSortKey": -17
+    },
+    {
+      "_id": "fld_adm_proposals",
+      "_type": "request_group",
+      "parentId": "fld_admin",
+      "name": "Proposals",
+      "metaSortKey": -16
+    },
+    {
+      "_id": "fld_adm_events",
+      "_type": "request_group",
+      "parentId": "fld_admin",
+      "name": "Events",
+      "metaSortKey": -15
+    },
+    {
+      "_id": "fld_adm_regs",
+      "_type": "request_group",
+      "parentId": "fld_admin",
+      "name": "Registrations",
+      "metaSortKey": -14
+    },
+    {
+      "_id": "fld_adm_speakers",
+      "_type": "request_group",
+      "parentId": "fld_admin",
+      "name": "Speakers",
+      "metaSortKey": -13
+    },
+    {
+      "_id": "fld_adm_sessions",
+      "_type": "request_group",
+      "parentId": "fld_admin",
+      "name": "Sessions",
+      "metaSortKey": -12
+    },
+    {
+      "_id": "fld_adm_packages",
+      "_type": "request_group",
+      "parentId": "fld_admin",
+      "name": "Sponsor Packages",
+      "metaSortKey": -11
+    },
+    {
+      "_id": "fld_adm_rbac",
+      "_type": "request_group",
+      "parentId": "fld_admin",
+      "name": "RBAC \u2014 Roles & Permissions",
+      "metaSortKey": -10
+    },
+    {
+      "_id": "fld_adm_cfp",
+      "_type": "request_group",
+      "parentId": "fld_admin",
+      "name": "CFP Review",
+      "metaSortKey": -9
+    },
+    {
+      "_id": "req_001",
+      "_type": "request",
+      "parentId": "fld_auth",
+      "name": "Register",
+      "method": "POST",
+      "url": "{{ base_url }}/api/v2/auth/register",
+      "headers": [
+        {
+          "name": "Content-Type",
+          "value": "application/json"
+        }
+      ],
+      "body": {
+        "mimeType": "application/json",
+        "text": "{\n  \"username\": \"johndoe\",\n  \"email\": \"john@example.com\",\n  \"password\": \"Secret@2025\",\n  \"full_name\": \"John Doe\"\n}"
+      },
+      "metaSortKey": -1
+    },
+    {
+      "_id": "req_002",
+      "_type": "request",
+      "parentId": "fld_auth",
+      "name": "Login",
+      "method": "POST",
+      "url": "{{ base_url }}/api/v2/auth/login",
+      "headers": [
+        {
+          "name": "Content-Type",
+          "value": "application/json"
+        }
+      ],
+      "body": {
+        "mimeType": "application/json",
+        "text": "{\n  \"email\": \"superadmin@pytogo.org\",\n  \"password\": \"ChangeMe!2025\"\n}"
+      },
+      "metaSortKey": -2
+    },
+    {
+      "_id": "req_003",
+      "_type": "request",
+      "parentId": "fld_auth",
+      "name": "Refresh Token",
+      "method": "POST",
+      "url": "{{ base_url }}/api/v2/auth/refresh",
+      "headers": [
+        {
+          "name": "Content-Type",
+          "value": "application/json"
+        }
+      ],
+      "parameters": [
+        {
+          "name": "refresh_token",
+          "value": "{{ refresh_token }}",
+          "disabled": false
+        }
+      ],
+      "body": {
+        "mimeType": "application/json",
+        "text": ""
+      },
+      "metaSortKey": -3
+    },
+    {
+      "_id": "req_004",
+      "_type": "request",
+      "parentId": "fld_auth",
+      "name": "Logout",
+      "method": "POST",
+      "url": "{{ base_url }}/api/v2/auth/logout",
+      "headers": [
+        {
+          "name": "Authorization",
+          "value": "Bearer {{ access_token }}"
+        }
+      ],
+      "body": {
+        "mimeType": "application/json",
+        "text": ""
+      },
+      "metaSortKey": -4
+    },
+    {
+      "_id": "req_005",
+      "_type": "request",
+      "parentId": "fld_auth",
+      "name": "Me (current user)",
+      "method": "GET",
+      "url": "{{ base_url }}/api/v2/auth/me",
+      "headers": [
+        {
+          "name": "Authorization",
+          "value": "Bearer {{ access_token }}"
+        }
+      ],
+      "body": {},
+      "metaSortKey": -5
+    },
+    {
+      "_id": "req_006",
+      "_type": "request",
+      "parentId": "fld_partners",
+      "name": "Submit Partnership/Sponsorship Inquiry",
+      "method": "POST",
+      "url": "{{ base_url }}/api/v2/partners-sponsors/inquiry/{{ event_code }}",
+      "headers": [
+        {
+          "name": "X-API-Key",
+          "value": "{{ api_key }}"
+        },
+        {
+          "name": "Content-Type",
+          "value": "application/json"
+        }
+      ],
+      "body": {
+        "mimeType": "application/json",
+        "text": "{\n  \"name\": \"Tech Corp\",\n  \"website_url\": \"https://techcorp.com\",\n  \"contact_name\": \"Alice Martin\",\n  \"contact_email\": \"alice@techcorp.com\",\n  \"contact_phone\": \"+228 90 00 00 00\",\n  \"description\": \"Nous souhaitons sponsoriser l'\u00e9v\u00e9nement\",\n  \"logo_url\": \"https://techcorp.com/logo.png\",\n  \"partner_type\": \"sponsorship\",\n  \"package_tier\": \"gold\"\n}"
+      },
+      "metaSortKey": -1
+    },
+    {
+      "_id": "req_007",
+      "_type": "request",
+      "parentId": "fld_partners",
+      "name": "List All Partners/Sponsors",
+      "method": "GET",
+      "url": "{{ base_url }}/api/v2/partners-sponsors/all",
+      "headers": [
+        {
+          "name": "X-API-Key",
+          "value": "{{ api_key }}"
+        }
+      ],
+      "body": {},
+      "metaSortKey": -2,
+      "parameters": [
+        {
+          "name": "page",
+          "value": "1",
+          "id": "",
+          "disabled": false
+        },
+        {
+          "name": "per_page",
+          "value": "20",
+          "id": "",
+          "disabled": false
+        }
+      ]
+    },
+    {
+      "_id": "req_008",
+      "_type": "request",
+      "parentId": "fld_partners",
+      "name": "List Partners/Sponsors by Event",
+      "method": "GET",
+      "url": "{{ base_url }}/api/v2/partners-sponsors/all/{{ event_code }}",
+      "headers": [
+        {
+          "name": "X-API-Key",
+          "value": "{{ api_key }}"
+        }
+      ],
+      "body": {},
+      "metaSortKey": -3,
+      "parameters": [
+        {
+          "name": "page",
+          "value": "1",
+          "id": "",
+          "disabled": false
+        },
+        {
+          "name": "per_page",
+          "value": "20",
+          "id": "",
+          "disabled": false
+        }
+      ]
+    },
+    {
+      "_id": "req_009",
+      "_type": "request",
+      "parentId": "fld_partners",
+      "name": "Update Partner/Sponsor",
+      "method": "PUT",
+      "url": "{{ base_url }}/api/v2/partners-sponsors/{{ partner_id }}",
+      "headers": [
+        {
+          "name": "X-API-Key",
+          "value": "{{ api_key }}"
+        },
+        {
+          "name": "Content-Type",
+          "value": "application/json"
+        }
+      ],
+      "body": {
+        "mimeType": "application/json",
+        "text": "{\n  \"name\": \"Tech Corp Updated\",\n  \"is_confirmed\": true,\n  \"package_tier\": \"platinum\",\n  \"contact_email\": \"alice@techcorp.com\"\n}"
+      },
+      "metaSortKey": -4
+    },
+    {
+      "_id": "req_010",
+      "_type": "request",
+      "parentId": "fld_partners",
+      "name": "Delete Partner/Sponsor",
+      "method": "DELETE",
+      "url": "{{ base_url }}/api/v2/partners-sponsors/{{ partner_id }}",
+      "headers": [
+        {
+          "name": "X-API-Key",
+          "value": "{{ api_key }}"
+        }
+      ],
+      "body": {},
+      "metaSortKey": -5
+    },
+    {
+      "_id": "req_011",
+      "_type": "request",
+      "parentId": "fld_contacts",
+      "name": "List All Contacts",
+      "method": "GET",
+      "url": "{{ base_url }}/api/v2/contacts/",
+      "headers": [
+        {
+          "name": "X-API-Key",
+          "value": "{{ api_key }}"
+        }
+      ],
+      "body": {},
+      "metaSortKey": -1,
+      "parameters": [
+        {
+          "name": "page",
+          "value": "1",
+          "id": "",
+          "disabled": false
+        },
+        {
+          "name": "per_page",
+          "value": "20",
+          "id": "",
+          "disabled": false
+        }
+      ]
+    },
+    {
+      "_id": "req_012",
+      "_type": "request",
+      "parentId": "fld_contacts",
+      "name": "Get Contact by ID",
+      "method": "GET",
+      "url": "{{ base_url }}/api/v2/contacts/{{ contact_id }}",
+      "headers": [
+        {
+          "name": "X-API-Key",
+          "value": "{{ api_key }}"
+        }
+      ],
+      "body": {},
+      "metaSortKey": -2
+    },
+    {
+      "_id": "req_013",
+      "_type": "request",
+      "parentId": "fld_contacts",
+      "name": "Send Contact Message",
+      "method": "POST",
+      "url": "{{ base_url }}/api/v2/contacts/send",
+      "headers": [
+        {
+          "name": "X-API-Key",
+          "value": "{{ api_key }}"
+        },
+        {
+          "name": "Content-Type",
+          "value": "application/json"
+        }
+      ],
+      "body": {
+        "mimeType": "application/json",
+        "text": "{\n  \"name\": \"Koffi Amegah\",\n  \"email\": \"koffi@example.com\",\n  \"subject\": \"Demande d'information\",\n  \"message\": \"Bonjour, je souhaite en savoir plus sur l'\u00e9v\u00e9nement.\"\n}"
+      },
+      "metaSortKey": -3
+    },
+    {
+      "_id": "req_014",
+      "_type": "request",
+      "parentId": "fld_contacts",
+      "name": "Update Contact",
+      "method": "PUT",
+      "url": "{{ base_url }}/api/v2/contacts/{{ contact_id }}",
+      "headers": [
+        {
+          "name": "X-API-Key",
+          "value": "{{ api_key }}"
+        },
+        {
+          "name": "Content-Type",
+          "value": "application/json"
+        }
+      ],
+      "body": {
+        "mimeType": "application/json",
+        "text": "{\n  \"is_resolved\": true\n}"
+      },
+      "metaSortKey": -4
+    },
+    {
+      "_id": "req_015",
+      "_type": "request",
+      "parentId": "fld_contacts",
+      "name": "Delete Contact",
+      "method": "DELETE",
+      "url": "{{ base_url }}/api/v2/contacts/{{ contact_id }}",
+      "headers": [
+        {
+          "name": "X-API-Key",
+          "value": "{{ api_key }}"
+        }
+      ],
+      "body": {},
+      "metaSortKey": -5
+    },
+    {
+      "_id": "req_016",
+      "_type": "request",
+      "parentId": "fld_events_pub",
+      "name": "Create Event",
+      "method": "POST",
+      "url": "{{ base_url }}/api/v2/events/create",
+      "headers": [
+        {
+          "name": "X-API-Key",
+          "value": "{{ api_key }}"
+        },
+        {
+          "name": "Content-Type",
+          "value": "application/json"
+        }
+      ],
+      "body": {
+        "mimeType": "application/json",
+        "text": "{\n  \"code\": \"PYTOGO2025\",\n  \"title\": \"PyCon Togo 2025\",\n  \"tagline\": \"La conf\u00e9rence Python au Togo\",\n  \"description\": \"Rejoignez la communaut\u00e9 Python du Togo pour 2 jours de conf\u00e9rences, ateliers et networking.\",\n  \"location\": \"Universit\u00e9 de Lom\u00e9\",\n  \"country\": \"Togo\",\n  \"city\": \"Lom\u00e9\",\n  \"type\": \"conference\",\n  \"format\": \"hybrid\",\n  \"timezone\": \"Africa/Lome\",\n  \"start_date\": \"2025-11-15\",\n  \"end_date\": \"2025-11-16\",\n  \"website_url\": \"https://pytogo.org\",\n  \"cfp_open_at\": \"2025-07-01T00:00:00Z\",\n  \"cfp_close_at\": \"2025-09-30T23:59:59Z\",\n  \"ticket_sales_open_at\": \"2025-10-01T00:00:00Z\",\n  \"ticket_sales_close_at\": \"2025-11-14T23:59:59Z\",\n  \"is_active\": true\n}"
+      },
+      "metaSortKey": -1
+    },
+    {
+      "_id": "req_017",
+      "_type": "request",
+      "parentId": "fld_events_pub",
+      "name": "List Events",
+      "method": "GET",
+      "url": "{{ base_url }}/api/v2/events/list",
+      "headers": [
+        {
+          "name": "X-API-Key",
+          "value": "{{ api_key }}"
+        }
+      ],
+      "body": {},
+      "metaSortKey": -2,
+      "parameters": [
+        {
+          "name": "page",
+          "value": "1",
+          "id": "",
+          "disabled": false
+        },
+        {
+          "name": "per_page",
+          "value": "20",
+          "id": "",
+          "disabled": false
+        }
+      ]
+    },
+    {
+      "_id": "req_018",
+      "_type": "request",
+      "parentId": "fld_events_pub",
+      "name": "Get Event by Code",
+      "method": "GET",
+      "url": "{{ base_url }}/api/v2/events/get/{{ event_code }}",
+      "headers": [
+        {
+          "name": "X-API-Key",
+          "value": "{{ api_key }}"
+        }
+      ],
+      "body": {},
+      "metaSortKey": -3
+    },
+    {
+      "_id": "req_019",
+      "_type": "request",
+      "parentId": "fld_events_pub",
+      "name": "Update Event",
+      "method": "PUT",
+      "url": "{{ base_url }}/api/v2/events/update/{{ event_code }}",
+      "headers": [
+        {
+          "name": "X-API-Key",
+          "value": "{{ api_key }}"
+        },
+        {
+          "name": "Content-Type",
+          "value": "application/json"
+        }
+      ],
+      "body": {
+        "mimeType": "application/json",
+        "text": "{\n  \"title\": \"PyCon Togo 2025 \u2014 \u00c9dition Sp\u00e9ciale\",\n  \"tagline\": \"Deux jours pour changer le monde en Python\",\n  \"is_active\": true\n}"
+      },
+      "metaSortKey": -4
+    },
+    {
+      "_id": "req_020",
+      "_type": "request",
+      "parentId": "fld_events_pub",
+      "name": "Delete Event",
+      "method": "DELETE",
+      "url": "{{ base_url }}/api/v2/events/delete/{{ event_code }}",
+      "headers": [
+        {
+          "name": "X-API-Key",
+          "value": "{{ api_key }}"
+        }
+      ],
+      "body": {},
+      "metaSortKey": -5
+    },
+    {
+      "_id": "req_021",
+      "_type": "request",
+      "parentId": "fld_proposals_pub",
+      "name": "Submit Proposal (CFP)",
+      "method": "POST",
+      "url": "{{ base_url }}/api/v2/proposals/create/{{ event_code }}",
+      "headers": [
+        {
+          "name": "X-API-Key",
+          "value": "{{ api_key }}"
+        },
+        {
+          "name": "Content-Type",
+          "value": "application/json"
+        }
+      ],
+      "body": {
+        "mimeType": "application/json",
+        "text": "{\n  \"title\": \"Introduction \u00e0 FastAPI\",\n  \"description\": \"Un tour complet de FastAPI pour construire des APIs modernes avec Python.\",\n  \"abstract\": \"FastAPI est un framework moderne, rapide et bas\u00e9 sur Python 3.6+.\",\n  \"level\": \"Beginner\",\n  \"language\": \"French\",\n  \"speaker_full_name\": \"Ama Kodjovi\",\n  \"speaker_email\": \"ama@example.com\",\n  \"speaker_phone\": \"+228 91 23 45 67\",\n  \"speaker_organization\": \"Python Togo\",\n  \"speaker_bio\": \"D\u00e9veloppeuse backend passionn\u00e9e par Python et l'open source.\",\n  \"speaker_photo_url\": \"https://example.com/ama.jpg\",\n  \"speaker_social_links\": {\n    \"twitter\": \"https://twitter.com/ama\",\n    \"linkedin\": \"https://linkedin.com/in/ama\"\n  },\n  \"session_type\": \"talk\",\n  \"format\": \"onsite\",\n  \"needs_equipment\": false\n}"
+      },
+      "metaSortKey": -1
+    },
+    {
+      "_id": "req_022",
+      "_type": "request",
+      "parentId": "fld_proposals_pub",
+      "name": "List Proposals by Event",
+      "method": "GET",
+      "url": "{{ base_url }}/api/v2/proposals/list/{{ event_code }}",
+      "headers": [
+        {
+          "name": "X-API-Key",
+          "value": "{{ api_key }}"
+        }
+      ],
+      "body": {},
+      "metaSortKey": -2,
+      "parameters": [
+        {
+          "name": "page",
+          "value": "1",
+          "id": "",
+          "disabled": false
+        },
+        {
+          "name": "per_page",
+          "value": "20",
+          "id": "",
+          "disabled": false
+        }
+      ]
+    },
+    {
+      "_id": "req_023",
+      "_type": "request",
+      "parentId": "fld_proposals_pub",
+      "name": "List All Proposals",
+      "method": "GET",
+      "url": "{{ base_url }}/api/v2/proposals/list",
+      "headers": [
+        {
+          "name": "X-API-Key",
+          "value": "{{ api_key }}"
+        }
+      ],
+      "body": {},
+      "metaSortKey": -3,
+      "parameters": [
+        {
+          "name": "page",
+          "value": "1",
+          "id": "",
+          "disabled": false
+        },
+        {
+          "name": "per_page",
+          "value": "20",
+          "id": "",
+          "disabled": false
+        }
+      ]
+    },
+    {
+      "_id": "req_024",
+      "_type": "request",
+      "parentId": "fld_proposals_pub",
+      "name": "Get Proposal by ID",
+      "method": "GET",
+      "url": "{{ base_url }}/api/v2/proposals/{{ proposal_id }}",
+      "headers": [
+        {
+          "name": "X-API-Key",
+          "value": "{{ api_key }}"
+        }
+      ],
+      "body": {},
+      "metaSortKey": -4
+    },
+    {
+      "_id": "req_025",
+      "_type": "request",
+      "parentId": "fld_proposals_pub",
+      "name": "Update Proposal",
+      "method": "PUT",
+      "url": "{{ base_url }}/api/v2/proposals/update/{{ proposal_id }}",
+      "headers": [
+        {
+          "name": "X-API-Key",
+          "value": "{{ api_key }}"
+        },
+        {
+          "name": "Content-Type",
+          "value": "application/json"
+        }
+      ],
+      "body": {
+        "mimeType": "application/json",
+        "text": "{\n  \"title\": \"Introduction \u00e0 FastAPI \u2014 Mise \u00e0 jour\",\n  \"description\": \"Un tour complet de FastAPI.\",\n  \"abstract\": \"FastAPI est un framework moderne.\",\n  \"level\": \"Intermediate\",\n  \"language\": \"French\",\n  \"speaker_full_name\": \"Ama Kodjovi\",\n  \"speaker_email\": \"ama@example.com\",\n  \"session_type\": \"talk\",\n  \"status\": \"submitted\",\n  \"format\": \"onsite\",\n  \"needs_equipment\": false\n}"
+      },
+      "metaSortKey": -5
+    },
+    {
+      "_id": "req_026",
+      "_type": "request",
+      "parentId": "fld_proposals_pub",
+      "name": "Delete Proposal",
+      "method": "DELETE",
+      "url": "{{ base_url }}/api/v2/proposals/delete/{{ proposal_id }}",
+      "headers": [
+        {
+          "name": "X-API-Key",
+          "value": "{{ api_key }}"
+        }
+      ],
+      "body": {},
+      "metaSortKey": -6
+    },
+    {
+      "_id": "req_027",
+      "_type": "request",
+      "parentId": "fld_tracks_pub",
+      "name": "Create Track",
+      "method": "POST",
+      "url": "{{ base_url }}/api/v2/tracks/create/{{ event_code }}",
+      "headers": [
+        {
+          "name": "X-API-Key",
+          "value": "{{ api_key }}"
+        },
+        {
+          "name": "Content-Type",
+          "value": "application/json"
+        }
+      ],
+      "body": {
+        "mimeType": "application/json",
+        "text": "{\n  \"name\": \"Web & APIs\",\n  \"description\": \"Sessions sur le d\u00e9veloppement web et les APIs REST\",\n  \"color\": \"#3B82F6\"\n}"
+      },
+      "metaSortKey": -1
+    },
+    {
+      "_id": "req_028",
+      "_type": "request",
+      "parentId": "fld_tracks_pub",
+      "name": "List Tracks by Event",
+      "method": "GET",
+      "url": "{{ base_url }}/api/v2/tracks/list/{{ event_code }}",
+      "headers": [
+        {
+          "name": "X-API-Key",
+          "value": "{{ api_key }}"
+        }
+      ],
+      "body": {},
+      "metaSortKey": -2,
+      "parameters": [
+        {
+          "name": "page",
+          "value": "1",
+          "id": "",
+          "disabled": false
+        },
+        {
+          "name": "per_page",
+          "value": "20",
+          "id": "",
+          "disabled": false
+        }
+      ]
+    },
+    {
+      "_id": "req_029",
+      "_type": "request",
+      "parentId": "fld_tracks_pub",
+      "name": "List All Tracks",
+      "method": "GET",
+      "url": "{{ base_url }}/api/v2/tracks/list",
+      "headers": [
+        {
+          "name": "X-API-Key",
+          "value": "{{ api_key }}"
+        }
+      ],
+      "body": {},
+      "metaSortKey": -3,
+      "parameters": [
+        {
+          "name": "page",
+          "value": "1",
+          "id": "",
+          "disabled": false
+        },
+        {
+          "name": "per_page",
+          "value": "20",
+          "id": "",
+          "disabled": false
+        }
+      ]
+    },
+    {
+      "_id": "req_030",
+      "_type": "request",
+      "parentId": "fld_tracks_pub",
+      "name": "Get Track by ID",
+      "method": "GET",
+      "url": "{{ base_url }}/api/v2/tracks/{{ track_id }}",
+      "headers": [
+        {
+          "name": "X-API-Key",
+          "value": "{{ api_key }}"
+        }
+      ],
+      "body": {},
+      "metaSortKey": -4
+    },
+    {
+      "_id": "req_031",
+      "_type": "request",
+      "parentId": "fld_tracks_pub",
+      "name": "Update Track",
+      "method": "PUT",
+      "url": "{{ base_url }}/api/v2/tracks/update/{{ track_id }}",
+      "headers": [
+        {
+          "name": "X-API-Key",
+          "value": "{{ api_key }}"
+        },
+        {
+          "name": "Content-Type",
+          "value": "application/json"
+        }
+      ],
+      "body": {
+        "mimeType": "application/json",
+        "text": "{\n  \"name\": \"Web & APIs \u2014 \u00c9dition 2\",\n  \"description\": \"Mise \u00e0 jour de la description\",\n  \"color\": \"#6366F1\"\n}"
+      },
+      "metaSortKey": -5
+    },
+    {
+      "_id": "req_032",
+      "_type": "request",
+      "parentId": "fld_tracks_pub",
+      "name": "Delete Track",
+      "method": "DELETE",
+      "url": "{{ base_url }}/api/v2/tracks/delete/{{ track_id }}",
+      "headers": [
+        {
+          "name": "X-API-Key",
+          "value": "{{ api_key }}"
+        }
+      ],
+      "body": {},
+      "metaSortKey": -6
+    },
+    {
+      "_id": "req_033",
+      "_type": "request",
+      "parentId": "fld_registrations",
+      "name": "Register for Event",
+      "method": "POST",
+      "url": "{{ base_url }}/api/v2/registrations/{{ event_code }}",
+      "headers": [
+        {
+          "name": "Authorization",
+          "value": "Bearer {{ access_token }}"
+        },
+        {
+          "name": "Content-Type",
+          "value": "application/json"
+        }
+      ],
+      "body": {
+        "mimeType": "application/json",
+        "text": "{\n  \"full_name\": \"Yao Mensah\",\n  \"email\": \"yao@example.com\",\n  \"phone\": \"+228 99 88 77 66\",\n  \"organization\": \"EPAC\",\n  \"ticket_type\": \"general\"\n}"
+      },
+      "metaSortKey": -1
+    },
+    {
+      "_id": "req_034",
+      "_type": "request",
+      "parentId": "fld_shop_public",
+      "name": "List Categories (public)",
+      "method": "GET",
+      "url": "{{ base_url }}/api/v2/shop/categories",
+      "headers": [],
+      "body": {},
+      "metaSortKey": -1
+    },
+    {
+      "_id": "req_035",
+      "_type": "request",
+      "parentId": "fld_shop_public",
+      "name": "Get Category (public)",
+      "method": "GET",
+      "url": "{{ base_url }}/api/v2/shop/categories/{{ category_id }}",
+      "headers": [],
+      "body": {},
+      "metaSortKey": -2
+    },
+    {
+      "_id": "req_036",
+      "_type": "request",
+      "parentId": "fld_shop_public",
+      "name": "List Products (public)",
+      "method": "GET",
+      "url": "{{ base_url }}/api/v2/shop/products",
+      "headers": [],
+      "parameters": [
+        {
+          "name": "event_id",
+          "value": "{{ event_id }}",
+          "disabled": true
+        },
+        {
+          "name": "category_id",
+          "value": "{{ category_id }}",
+          "disabled": true
+        },
+        {
+          "name": "page",
+          "value": "1",
+          "id": "",
+          "disabled": false
+        },
+        {
+          "name": "per_page",
+          "value": "20",
+          "id": "",
+          "disabled": false
+        }
+      ],
+      "body": {},
+      "metaSortKey": -3
+    },
+    {
+      "_id": "req_037",
+      "_type": "request",
+      "parentId": "fld_shop_public",
+      "name": "Get Product Detail (public)",
+      "method": "GET",
+      "url": "{{ base_url }}/api/v2/shop/products/{{ product_id }}",
+      "headers": [],
+      "body": {},
+      "metaSortKey": -4
+    },
+    {
+      "_id": "req_038",
+      "_type": "request",
+      "parentId": "fld_shop_public",
+      "name": "Get Cart",
+      "method": "GET",
+      "url": "{{ base_url }}/api/v2/shop/cart",
+      "headers": [
+        {
+          "name": "Authorization",
+          "value": "Bearer {{ access_token }}"
+        }
+      ],
+      "body": {},
+      "metaSortKey": -5
+    },
+    {
+      "_id": "req_039",
+      "_type": "request",
+      "parentId": "fld_shop_public",
+      "name": "Add Item to Cart",
+      "method": "POST",
+      "url": "{{ base_url }}/api/v2/shop/cart/items",
+      "headers": [
+        {
+          "name": "Authorization",
+          "value": "Bearer {{ access_token }}"
+        },
+        {
+          "name": "Content-Type",
+          "value": "application/json"
+        }
+      ],
+      "body": {
+        "mimeType": "application/json",
+        "text": "{\n  \"variant_id\": \"{{ variant_id }}\",\n  \"quantity\": 2\n}"
+      },
+      "metaSortKey": -6
+    },
+    {
+      "_id": "req_040",
+      "_type": "request",
+      "parentId": "fld_shop_public",
+      "name": "Update Cart Item Quantity",
+      "method": "PUT",
+      "url": "{{ base_url }}/api/v2/shop/cart/items/{{ variant_id }}",
+      "headers": [
+        {
+          "name": "Authorization",
+          "value": "Bearer {{ access_token }}"
+        },
+        {
+          "name": "Content-Type",
+          "value": "application/json"
+        }
+      ],
+      "body": {
+        "mimeType": "application/json",
+        "text": "{\n  \"quantity\": 3\n}"
+      },
+      "metaSortKey": -7
+    },
+    {
+      "_id": "req_041",
+      "_type": "request",
+      "parentId": "fld_shop_public",
+      "name": "Remove Item from Cart",
+      "method": "DELETE",
+      "url": "{{ base_url }}/api/v2/shop/cart/items/{{ variant_id }}",
+      "headers": [
+        {
+          "name": "Authorization",
+          "value": "Bearer {{ access_token }}"
+        }
+      ],
+      "body": {},
+      "metaSortKey": -8
+    },
+    {
+      "_id": "req_042",
+      "_type": "request",
+      "parentId": "fld_shop_public",
+      "name": "Clear Cart",
+      "method": "DELETE",
+      "url": "{{ base_url }}/api/v2/shop/cart",
+      "headers": [
+        {
+          "name": "Authorization",
+          "value": "Bearer {{ access_token }}"
+        }
+      ],
+      "body": {},
+      "metaSortKey": -9
+    },
+    {
+      "_id": "req_043",
+      "_type": "request",
+      "parentId": "fld_shop_public",
+      "name": "Checkout",
+      "method": "POST",
+      "url": "{{ base_url }}/api/v2/shop/cart/checkout",
+      "headers": [
+        {
+          "name": "Authorization",
+          "value": "Bearer {{ access_token }}"
+        },
+        {
+          "name": "Content-Type",
+          "value": "application/json"
+        }
+      ],
+      "body": {
+        "mimeType": "application/json",
+        "text": "{\n  \"event_id\": \"{{ event_id }}\",\n  \"shipping_address\": {\n    \"street\": \"123 Rue de la Paix\",\n    \"city\": \"Lom\u00e9\",\n    \"country\": \"Togo\"\n  },\n  \"coupon_code\": null\n}"
+      },
+      "metaSortKey": -10
+    },
+    {
+      "_id": "req_044",
+      "_type": "request",
+      "parentId": "fld_shop_public",
+      "name": "My Orders",
+      "method": "GET",
+      "url": "{{ base_url }}/api/v2/shop/orders/me",
+      "headers": [
+        {
+          "name": "Authorization",
+          "value": "Bearer {{ access_token }}"
+        }
+      ],
+      "body": {},
+      "metaSortKey": -11,
+      "parameters": [
+        {
+          "name": "page",
+          "value": "1",
+          "id": "",
+          "disabled": false
+        },
+        {
+          "name": "per_page",
+          "value": "20",
+          "id": "",
+          "disabled": false
+        }
+      ]
+    },
+    {
+      "_id": "req_045",
+      "_type": "request",
+      "parentId": "fld_shop_public",
+      "name": "My Order Detail",
+      "method": "GET",
+      "url": "{{ base_url }}/api/v2/shop/orders/me/{{ order_id }}",
+      "headers": [
+        {
+          "name": "Authorization",
+          "value": "Bearer {{ access_token }}"
+        }
+      ],
+      "body": {},
+      "metaSortKey": -12
+    },
+    {
+      "_id": "req_046",
+      "_type": "request",
+      "parentId": "fld_shop_dash",
+      "name": "Shop Dashboard",
+      "method": "GET",
+      "url": "{{ base_url }}/api/v2/admin/shop/dashboard",
+      "headers": [
+        {
+          "name": "Authorization",
+          "value": "Bearer {{ access_token }}"
+        }
+      ],
+      "body": {},
+      "metaSortKey": -1
+    },
+    {
+      "_id": "req_047",
+      "_type": "request",
+      "parentId": "fld_shop_dash",
+      "name": "Shop Analytics",
+      "method": "GET",
+      "url": "{{ base_url }}/api/v2/admin/shop/dashboard/analytics",
+      "headers": [
+        {
+          "name": "Authorization",
+          "value": "Bearer {{ access_token }}"
+        }
+      ],
+      "parameters": [
+        {
+          "name": "low_stock_threshold",
+          "value": "5",
+          "disabled": false
+        },
+        {
+          "name": "pending_days_threshold",
+          "value": "3",
+          "disabled": false
+        },
+        {
+          "name": "top_n",
+          "value": "10",
+          "disabled": false
+        }
+      ],
+      "body": {},
+      "metaSortKey": -2
+    },
+    {
+      "_id": "req_048",
+      "_type": "request",
+      "parentId": "fld_shop_cat",
+      "name": "List Categories (admin)",
+      "method": "GET",
+      "url": "{{ base_url }}/api/v2/admin/shop/categories",
+      "headers": [
+        {
+          "name": "Authorization",
+          "value": "Bearer {{ access_token }}"
+        }
+      ],
+      "body": {},
+      "metaSortKey": -1
+    },
+    {
+      "_id": "req_049",
+      "_type": "request",
+      "parentId": "fld_shop_cat",
+      "name": "Create Category",
+      "method": "POST",
+      "url": "{{ base_url }}/api/v2/admin/shop/categories",
+      "headers": [
+        {
+          "name": "Authorization",
+          "value": "Bearer {{ access_token }}"
+        },
+        {
+          "name": "Content-Type",
+          "value": "application/json"
+        }
+      ],
+      "body": {
+        "mimeType": "application/json",
+        "text": "{\n  \"name\": \"T-Shirts\",\n  \"slug\": \"t-shirts\",\n  \"description\": \"T-shirts Python Togo officiel\",\n  \"is_active\": true\n}"
+      },
+      "metaSortKey": -2
+    },
+    {
+      "_id": "req_050",
+      "_type": "request",
+      "parentId": "fld_shop_cat",
+      "name": "Get Category (admin)",
+      "method": "GET",
+      "url": "{{ base_url }}/api/v2/admin/shop/categories/{{ category_id }}",
+      "headers": [
+        {
+          "name": "Authorization",
+          "value": "Bearer {{ access_token }}"
+        }
+      ],
+      "body": {},
+      "metaSortKey": -3
+    },
+    {
+      "_id": "req_051",
+      "_type": "request",
+      "parentId": "fld_shop_cat",
+      "name": "Update Category",
+      "method": "PUT",
+      "url": "{{ base_url }}/api/v2/admin/shop/categories/{{ category_id }}",
+      "headers": [
+        {
+          "name": "Authorization",
+          "value": "Bearer {{ access_token }}"
+        },
+        {
+          "name": "Content-Type",
+          "value": "application/json"
+        }
+      ],
+      "body": {
+        "mimeType": "application/json",
+        "text": "{\n  \"name\": \"T-Shirts \u00c9dition Limit\u00e9e\",\n  \"slug\": \"t-shirts-limited\",\n  \"description\": \"Collection limit\u00e9e\"\n}"
+      },
+      "metaSortKey": -4
+    },
+    {
+      "_id": "req_052",
+      "_type": "request",
+      "parentId": "fld_shop_cat",
+      "name": "Toggle Category Active",
+      "method": "PATCH",
+      "url": "{{ base_url }}/api/v2/admin/shop/categories/{{ category_id }}/toggle",
+      "headers": [
+        {
+          "name": "Authorization",
+          "value": "Bearer {{ access_token }}"
+        }
+      ],
+      "body": {},
+      "metaSortKey": -5
+    },
+    {
+      "_id": "req_053",
+      "_type": "request",
+      "parentId": "fld_shop_cat",
+      "name": "Delete Category",
+      "method": "DELETE",
+      "url": "{{ base_url }}/api/v2/admin/shop/categories/{{ category_id }}",
+      "headers": [
+        {
+          "name": "Authorization",
+          "value": "Bearer {{ access_token }}"
+        }
+      ],
+      "body": {},
+      "metaSortKey": -6
+    },
+    {
+      "_id": "req_054",
+      "_type": "request",
+      "parentId": "fld_shop_prod",
+      "name": "List Products (admin)",
+      "method": "GET",
+      "url": "{{ base_url }}/api/v2/admin/shop/products",
+      "headers": [
+        {
+          "name": "Authorization",
+          "value": "Bearer {{ access_token }}"
+        }
+      ],
+      "body": {},
+      "metaSortKey": -1,
+      "parameters": [
+        {
+          "name": "page",
+          "value": "1",
+          "id": "",
+          "disabled": false
+        },
+        {
+          "name": "per_page",
+          "value": "20",
+          "id": "",
+          "disabled": false
+        }
+      ]
+    },
+    {
+      "_id": "req_055",
+      "_type": "request",
+      "parentId": "fld_shop_prod",
+      "name": "Create Product",
+      "method": "POST",
+      "url": "{{ base_url }}/api/v2/admin/shop/products",
+      "headers": [
+        {
+          "name": "Authorization",
+          "value": "Bearer {{ access_token }}"
+        },
+        {
+          "name": "Content-Type",
+          "value": "application/json"
+        }
+      ],
+      "body": {
+        "mimeType": "application/json",
+        "text": "{\n  \"event_id\": \"{{ event_id }}\",\n  \"category_id\": \"{{ category_id }}\",\n  \"name\": \"T-Shirt PyCon Togo 2025\",\n  \"slug\": \"tshirt-pycon-togo-2025\",\n  \"description\": \"T-shirt officiel PyCon Togo 2025\",\n  \"image_url\": \"https://cdn.pytogo.org/tshirt.jpg\",\n  \"base_price\": \"5000.00\",\n  \"is_active\": true\n}"
+      },
+      "metaSortKey": -2
+    },
+    {
+      "_id": "req_056",
+      "_type": "request",
+      "parentId": "fld_shop_prod",
+      "name": "Get Product (admin)",
+      "method": "GET",
+      "url": "{{ base_url }}/api/v2/admin/shop/products/{{ product_id }}",
+      "headers": [
+        {
+          "name": "Authorization",
+          "value": "Bearer {{ access_token }}"
+        }
+      ],
+      "body": {},
+      "metaSortKey": -3
+    },
+    {
+      "_id": "req_057",
+      "_type": "request",
+      "parentId": "fld_shop_prod",
+      "name": "Update Product",
+      "method": "PUT",
+      "url": "{{ base_url }}/api/v2/admin/shop/products/{{ product_id }}",
+      "headers": [
+        {
+          "name": "Authorization",
+          "value": "Bearer {{ access_token }}"
+        },
+        {
+          "name": "Content-Type",
+          "value": "application/json"
+        }
+      ],
+      "body": {
+        "mimeType": "application/json",
+        "text": "{\n  \"name\": \"T-Shirt PyCon Togo 2025 \u2014 \u00c9dition collector\",\n  \"base_price\": \"6000.00\"\n}"
+      },
+      "metaSortKey": -4
+    },
+    {
+      "_id": "req_058",
+      "_type": "request",
+      "parentId": "fld_shop_prod",
+      "name": "Toggle Product Active",
+      "method": "PATCH",
+      "url": "{{ base_url }}/api/v2/admin/shop/products/{{ product_id }}/toggle",
+      "headers": [
+        {
+          "name": "Authorization",
+          "value": "Bearer {{ access_token }}"
+        }
+      ],
+      "body": {},
+      "metaSortKey": -5
+    },
+    {
+      "_id": "req_059",
+      "_type": "request",
+      "parentId": "fld_shop_prod",
+      "name": "Delete Product",
+      "method": "DELETE",
+      "url": "{{ base_url }}/api/v2/admin/shop/products/{{ product_id }}",
+      "headers": [
+        {
+          "name": "Authorization",
+          "value": "Bearer {{ access_token }}"
+        }
+      ],
+      "body": {},
+      "metaSortKey": -6
+    },
+    {
+      "_id": "req_060",
+      "_type": "request",
+      "parentId": "fld_shop_prod",
+      "name": "List Variants",
+      "method": "GET",
+      "url": "{{ base_url }}/api/v2/admin/shop/products/{{ product_id }}/variants",
+      "headers": [
+        {
+          "name": "Authorization",
+          "value": "Bearer {{ access_token }}"
+        }
+      ],
+      "body": {},
+      "metaSortKey": -7
+    },
+    {
+      "_id": "req_061",
+      "_type": "request",
+      "parentId": "fld_shop_prod",
+      "name": "Create Variant",
+      "method": "POST",
+      "url": "{{ base_url }}/api/v2/admin/shop/products/{{ product_id }}/variants",
+      "headers": [
+        {
+          "name": "Authorization",
+          "value": "Bearer {{ access_token }}"
+        },
+        {
+          "name": "Content-Type",
+          "value": "application/json"
+        }
+      ],
+      "body": {
+        "mimeType": "application/json",
+        "text": "{\n  \"name\": \"Taille L\",\n  \"sku\": \"TSHIRT-2025-L\",\n  \"price_override\": null,\n  \"stock_quantity\": 50,\n  \"attributes\": { \"size\": \"L\", \"color\": \"black\" },\n  \"is_active\": true\n}"
+      },
+      "metaSortKey": -8
+    },
+    {
+      "_id": "req_062",
+      "_type": "request",
+      "parentId": "fld_shop_prod",
+      "name": "Update Variant",
+      "method": "PUT",
+      "url": "{{ base_url }}/api/v2/admin/shop/products/{{ product_id }}/variants/{{ variant_id }}",
+      "headers": [
+        {
+          "name": "Authorization",
+          "value": "Bearer {{ access_token }}"
+        },
+        {
+          "name": "Content-Type",
+          "value": "application/json"
+        }
+      ],
+      "body": {
+        "mimeType": "application/json",
+        "text": "{\n  \"stock_quantity\": 30,\n  \"price_override\": \"5500.00\"\n}"
+      },
+      "metaSortKey": -9
+    },
+    {
+      "_id": "req_063",
+      "_type": "request",
+      "parentId": "fld_shop_prod",
+      "name": "Toggle Variant Active",
+      "method": "PATCH",
+      "url": "{{ base_url }}/api/v2/admin/shop/products/{{ product_id }}/variants/{{ variant_id }}/toggle",
+      "headers": [
+        {
+          "name": "Authorization",
+          "value": "Bearer {{ access_token }}"
+        }
+      ],
+      "body": {},
+      "metaSortKey": -10
+    },
+    {
+      "_id": "req_064",
+      "_type": "request",
+      "parentId": "fld_shop_prod",
+      "name": "Delete Variant",
+      "method": "DELETE",
+      "url": "{{ base_url }}/api/v2/admin/shop/products/{{ product_id }}/variants/{{ variant_id }}",
+      "headers": [
+        {
+          "name": "Authorization",
+          "value": "Bearer {{ access_token }}"
+        }
+      ],
+      "body": {},
+      "metaSortKey": -11
+    },
+    {
+      "_id": "req_065",
+      "_type": "request",
+      "parentId": "fld_shop_ord",
+      "name": "List Orders",
+      "method": "GET",
+      "url": "{{ base_url }}/api/v2/admin/shop/orders",
+      "headers": [
+        {
+          "name": "Authorization",
+          "value": "Bearer {{ access_token }}"
+        }
+      ],
+      "parameters": [
+        {
+          "name": "event_id",
+          "value": "{{ event_id }}",
+          "disabled": true
+        },
+        {
+          "name": "status",
+          "value": "pending",
+          "disabled": true
+        },
+        {
+          "name": "user_id",
+          "value": "{{ user_id }}",
+          "disabled": true
+        },
+        {
+          "name": "limit",
+          "value": "50",
+          "disabled": false
+        },
+        {
+          "name": "offset",
+          "value": "0",
+          "disabled": false
+        }
+      ],
+      "body": {},
+      "metaSortKey": -1
+    },
+    {
+      "_id": "req_066",
+      "_type": "request",
+      "parentId": "fld_shop_ord",
+      "name": "Get Order Detail",
+      "method": "GET",
+      "url": "{{ base_url }}/api/v2/admin/shop/orders/{{ order_id }}",
+      "headers": [
+        {
+          "name": "Authorization",
+          "value": "Bearer {{ access_token }}"
+        }
+      ],
+      "body": {},
+      "metaSortKey": -2
+    },
+    {
+      "_id": "req_067",
+      "_type": "request",
+      "parentId": "fld_shop_ord",
+      "name": "Update Order Status",
+      "method": "PATCH",
+      "url": "{{ base_url }}/api/v2/admin/shop/orders/{{ order_id }}/status",
+      "headers": [
+        {
+          "name": "Authorization",
+          "value": "Bearer {{ access_token }}"
+        },
+        {
+          "name": "Content-Type",
+          "value": "application/json"
+        }
+      ],
+      "body": {
+        "mimeType": "application/json",
+        "text": "{\n  \"status\": \"paid\"\n}"
+      },
+      "metaSortKey": -3
+    },
+    {
+      "_id": "req_068",
+      "_type": "request",
+      "parentId": "fld_shop_cust",
+      "name": "List Customers",
+      "method": "GET",
+      "url": "{{ base_url }}/api/v2/admin/shop/customers",
+      "headers": [
+        {
+          "name": "Authorization",
+          "value": "Bearer {{ access_token }}"
+        }
+      ],
+      "body": {},
+      "metaSortKey": -1,
+      "parameters": [
+        {
+          "name": "page",
+          "value": "1",
+          "id": "",
+          "disabled": false
+        },
+        {
+          "name": "per_page",
+          "value": "20",
+          "id": "",
+          "disabled": false
+        }
+      ]
+    },
+    {
+      "_id": "req_069",
+      "_type": "request",
+      "parentId": "fld_shop_cust",
+      "name": "Get Customer",
+      "method": "GET",
+      "url": "{{ base_url }}/api/v2/admin/shop/customers/{{ customer_id }}",
+      "headers": [
+        {
+          "name": "Authorization",
+          "value": "Bearer {{ access_token }}"
+        }
+      ],
+      "body": {},
+      "metaSortKey": -2
+    },
+    {
+      "_id": "req_070",
+      "_type": "request",
+      "parentId": "fld_shop_cust",
+      "name": "Get Customer Orders",
+      "method": "GET",
+      "url": "{{ base_url }}/api/v2/admin/shop/customers/{{ customer_id }}/orders",
+      "headers": [
+        {
+          "name": "Authorization",
+          "value": "Bearer {{ access_token }}"
+        }
+      ],
+      "body": {},
+      "metaSortKey": -3
+    },
+    {
+      "_id": "req_071",
+      "_type": "request",
+      "parentId": "fld_shop_cust",
+      "name": "Toggle Customer Active",
+      "method": "PATCH",
+      "url": "{{ base_url }}/api/v2/admin/shop/customers/{{ customer_id }}/toggle",
+      "headers": [
+        {
+          "name": "Authorization",
+          "value": "Bearer {{ access_token }}"
+        }
+      ],
+      "body": {},
+      "metaSortKey": -4
+    },
+    {
+      "_id": "req_072",
+      "_type": "request",
+      "parentId": "fld_shop_pay",
+      "name": "List Payments",
+      "method": "GET",
+      "url": "{{ base_url }}/api/v2/admin/shop/payments",
+      "headers": [
+        {
+          "name": "Authorization",
+          "value": "Bearer {{ access_token }}"
+        }
+      ],
+      "body": {},
+      "metaSortKey": -1,
+      "parameters": [
+        {
+          "name": "page",
+          "value": "1",
+          "id": "",
+          "disabled": false
+        },
+        {
+          "name": "per_page",
+          "value": "20",
+          "id": "",
+          "disabled": false
+        }
+      ]
+    },
+    {
+      "_id": "req_073",
+      "_type": "request",
+      "parentId": "fld_shop_pay",
+      "name": "Get Payment",
+      "method": "GET",
+      "url": "{{ base_url }}/api/v2/admin/shop/payments/{{ payment_id }}",
+      "headers": [
+        {
+          "name": "Authorization",
+          "value": "Bearer {{ access_token }}"
+        }
+      ],
+      "body": {},
+      "metaSortKey": -2
+    },
+    {
+      "_id": "req_074",
+      "_type": "request",
+      "parentId": "fld_shop_coup",
+      "name": "List Coupons",
+      "method": "GET",
+      "url": "{{ base_url }}/api/v2/admin/shop/coupons",
+      "headers": [
+        {
+          "name": "Authorization",
+          "value": "Bearer {{ access_token }}"
+        }
+      ],
+      "body": {},
+      "metaSortKey": -1,
+      "parameters": [
+        {
+          "name": "page",
+          "value": "1",
+          "id": "",
+          "disabled": false
+        },
+        {
+          "name": "per_page",
+          "value": "20",
+          "id": "",
+          "disabled": false
+        }
+      ]
+    },
+    {
+      "_id": "req_075",
+      "_type": "request",
+      "parentId": "fld_shop_coup",
+      "name": "Create Coupon",
+      "method": "POST",
+      "url": "{{ base_url }}/api/v2/admin/shop/coupons",
+      "headers": [
+        {
+          "name": "Authorization",
+          "value": "Bearer {{ access_token }}"
+        },
+        {
+          "name": "Content-Type",
+          "value": "application/json"
+        }
+      ],
+      "body": {
+        "mimeType": "application/json",
+        "text": "{\n  \"event_id\": \"{{ event_id }}\",\n  \"code\": \"PYTHON25\",\n  \"type\": \"percentage\",\n  \"value\": \"20.00\",\n  \"max_uses\": 100,\n  \"expires_at\": \"2025-11-14T23:59:59Z\",\n  \"is_active\": true\n}"
+      },
+      "metaSortKey": -2
+    },
+    {
+      "_id": "req_076",
+      "_type": "request",
+      "parentId": "fld_shop_coup",
+      "name": "Update Coupon",
+      "method": "PUT",
+      "url": "{{ base_url }}/api/v2/admin/shop/coupons/{{ coupon_id }}",
+      "headers": [
+        {
+          "name": "Authorization",
+          "value": "Bearer {{ access_token }}"
+        },
+        {
+          "name": "Content-Type",
+          "value": "application/json"
+        }
+      ],
+      "body": {
+        "mimeType": "application/json",
+        "text": "{\n  \"max_uses\": 200,\n  \"is_active\": true\n}"
+      },
+      "metaSortKey": -3
+    },
+    {
+      "_id": "req_077",
+      "_type": "request",
+      "parentId": "fld_shop_coup",
+      "name": "Delete Coupon",
+      "method": "DELETE",
+      "url": "{{ base_url }}/api/v2/admin/shop/coupons/{{ coupon_id }}",
+      "headers": [
+        {
+          "name": "Authorization",
+          "value": "Bearer {{ access_token }}"
+        }
+      ],
+      "body": {},
+      "metaSortKey": -4
+    },
+    {
+      "_id": "req_078",
+      "_type": "request",
+      "parentId": "fld_adm_overview",
+      "name": "Global Overview",
+      "method": "GET",
+      "url": "{{ base_url }}/api/v2/admin/overview",
+      "headers": [
+        {
+          "name": "Authorization",
+          "value": "Bearer {{ access_token }}"
+        }
+      ],
+      "body": {},
+      "metaSortKey": -1
+    },
+    {
+      "_id": "req_079",
+      "_type": "request",
+      "parentId": "fld_adm_security",
+      "name": "Security Overview",
+      "method": "GET",
+      "url": "{{ base_url }}/api/v2/admin/security/overview",
+      "headers": [
+        {
+          "name": "Authorization",
+          "value": "Bearer {{ access_token }}"
+        }
+      ],
+      "body": {},
+      "metaSortKey": -1
+    },
+    {
+      "_id": "req_080",
+      "_type": "request",
+      "parentId": "fld_adm_security",
+      "name": "List API Keys",
+      "method": "GET",
+      "url": "{{ base_url }}/api/v2/admin/security/api-keys",
+      "headers": [
+        {
+          "name": "Authorization",
+          "value": "Bearer {{ access_token }}"
+        }
+      ],
+      "body": {},
+      "metaSortKey": -2
+    },
+    {
+      "_id": "req_081",
+      "_type": "request",
+      "parentId": "fld_adm_security",
+      "name": "List Active Sessions",
+      "method": "GET",
+      "url": "{{ base_url }}/api/v2/admin/security/sessions",
+      "headers": [
+        {
+          "name": "Authorization",
+          "value": "Bearer {{ access_token }}"
+        }
+      ],
+      "body": {},
+      "metaSortKey": -3
+    },
+    {
+      "_id": "req_082",
+      "_type": "request",
+      "parentId": "fld_adm_users",
+      "name": "Users Overview",
+      "method": "GET",
+      "url": "{{ base_url }}/api/v2/admin/users/overview",
+      "headers": [
+        {
+          "name": "Authorization",
+          "value": "Bearer {{ access_token }}"
+        }
+      ],
+      "body": {},
+      "metaSortKey": -1
+    },
+    {
+      "_id": "req_083",
+      "_type": "request",
+      "parentId": "fld_adm_users",
+      "name": "List Inactive Users",
+      "method": "GET",
+      "url": "{{ base_url }}/api/v2/admin/users/inactive",
+      "headers": [
+        {
+          "name": "Authorization",
+          "value": "Bearer {{ access_token }}"
+        }
+      ],
+      "body": {},
+      "metaSortKey": -2,
+      "parameters": [
+        {
+          "name": "page",
+          "value": "1",
+          "id": "",
+          "disabled": false
+        },
+        {
+          "name": "per_page",
+          "value": "20",
+          "id": "",
+          "disabled": false
+        }
+      ]
+    },
+    {
+      "_id": "req_084",
+      "_type": "request",
+      "parentId": "fld_adm_users",
+      "name": "List New Users (7 days)",
+      "method": "GET",
+      "url": "{{ base_url }}/api/v2/admin/users/new",
+      "headers": [
+        {
+          "name": "Authorization",
+          "value": "Bearer {{ access_token }}"
+        }
+      ],
+      "body": {},
+      "metaSortKey": -3,
+      "parameters": [
+        {
+          "name": "page",
+          "value": "1",
+          "id": "",
+          "disabled": false
+        },
+        {
+          "name": "per_page",
+          "value": "20",
+          "id": "",
+          "disabled": false
+        }
+      ]
+    },
+    {
+      "_id": "req_085",
+      "_type": "request",
+      "parentId": "fld_adm_users",
+      "name": "List Users Without Orders",
+      "method": "GET",
+      "url": "{{ base_url }}/api/v2/admin/users/no-orders",
+      "headers": [
+        {
+          "name": "Authorization",
+          "value": "Bearer {{ access_token }}"
+        }
+      ],
+      "body": {},
+      "metaSortKey": -4,
+      "parameters": [
+        {
+          "name": "page",
+          "value": "1",
+          "id": "",
+          "disabled": false
+        },
+        {
+          "name": "per_page",
+          "value": "20",
+          "id": "",
+          "disabled": false
+        }
+      ]
+    },
+    {
+      "_id": "req_086",
+      "_type": "request",
+      "parentId": "fld_adm_outreach",
+      "name": "Outreach Overview",
+      "method": "GET",
+      "url": "{{ base_url }}/api/v2/admin/outreach/overview",
+      "headers": [
+        {
+          "name": "Authorization",
+          "value": "Bearer {{ access_token }}"
+        }
+      ],
+      "body": {},
+      "metaSortKey": -1
+    },
+    {
+      "_id": "req_087",
+      "_type": "request",
+      "parentId": "fld_adm_outreach",
+      "name": "Unresolved Contacts",
+      "method": "GET",
+      "url": "{{ base_url }}/api/v2/admin/outreach/contacts/unresolved",
+      "headers": [
+        {
+          "name": "Authorization",
+          "value": "Bearer {{ access_token }}"
+        }
+      ],
+      "body": {},
+      "metaSortKey": -2,
+      "parameters": [
+        {
+          "name": "page",
+          "value": "1",
+          "id": "",
+          "disabled": false
+        },
+        {
+          "name": "per_page",
+          "value": "20",
+          "id": "",
+          "disabled": false
+        }
+      ]
+    },
+    {
+      "_id": "req_088",
+      "_type": "request",
+      "parentId": "fld_adm_outreach",
+      "name": "Unconfirmed Partners",
+      "method": "GET",
+      "url": "{{ base_url }}/api/v2/admin/outreach/partners/unconfirmed",
+      "headers": [
+        {
+          "name": "Authorization",
+          "value": "Bearer {{ access_token }}"
+        }
+      ],
+      "body": {},
+      "metaSortKey": -3,
+      "parameters": [
+        {
+          "name": "page",
+          "value": "1",
+          "id": "",
+          "disabled": false
+        },
+        {
+          "name": "per_page",
+          "value": "20",
+          "id": "",
+          "disabled": false
+        }
+      ]
+    },
+    {
+      "_id": "req_089",
+      "_type": "request",
+      "parentId": "fld_adm_proposals",
+      "name": "Proposals Overview",
+      "method": "GET",
+      "url": "{{ base_url }}/api/v2/admin/proposals/overview",
+      "headers": [
+        {
+          "name": "Authorization",
+          "value": "Bearer {{ access_token }}"
+        }
+      ],
+      "body": {},
+      "metaSortKey": -1
+    },
+    {
+      "_id": "req_090",
+      "_type": "request",
+      "parentId": "fld_adm_proposals",
+      "name": "Proposals by Status",
+      "method": "GET",
+      "url": "{{ base_url }}/api/v2/admin/proposals/by-status/submitted",
+      "headers": [
+        {
+          "name": "Authorization",
+          "value": "Bearer {{ access_token }}"
+        }
+      ],
+      "body": {},
+      "metaSortKey": -2,
+      "parameters": [
+        {
+          "name": "page",
+          "value": "1",
+          "id": "",
+          "disabled": false
+        },
+        {
+          "name": "per_page",
+          "value": "20",
+          "id": "",
+          "disabled": false
+        }
+      ]
+    },
+    {
+      "_id": "req_091",
+      "_type": "request",
+      "parentId": "fld_adm_proposals",
+      "name": "Proposals Without Track",
+      "method": "GET",
+      "url": "{{ base_url }}/api/v2/admin/proposals/without-track",
+      "headers": [
+        {
+          "name": "Authorization",
+          "value": "Bearer {{ access_token }}"
+        }
+      ],
+      "body": {},
+      "metaSortKey": -3,
+      "parameters": [
+        {
+          "name": "page",
+          "value": "1",
+          "id": "",
+          "disabled": false
+        },
+        {
+          "name": "per_page",
+          "value": "20",
+          "id": "",
+          "disabled": false
+        }
+      ]
+    },
+    {
+      "_id": "req_092",
+      "_type": "request",
+      "parentId": "fld_adm_events",
+      "name": "Events Overview",
+      "method": "GET",
+      "url": "{{ base_url }}/api/v2/admin/events/overview",
+      "headers": [
+        {
+          "name": "Authorization",
+          "value": "Bearer {{ access_token }}"
+        }
+      ],
+      "body": {},
+      "metaSortKey": -1
+    },
+    {
+      "_id": "req_093",
+      "_type": "request",
+      "parentId": "fld_adm_regs",
+      "name": "Registrations Dashboard",
+      "method": "GET",
+      "url": "{{ base_url }}/api/v2/admin/registrations/{{ event_code }}/dashboard",
+      "headers": [
+        {
+          "name": "Authorization",
+          "value": "Bearer {{ access_token }}"
+        }
+      ],
+      "body": {},
+      "metaSortKey": -1
+    },
+    {
+      "_id": "req_094",
+      "_type": "request",
+      "parentId": "fld_adm_regs",
+      "name": "List Registrations by Event",
+      "method": "GET",
+      "url": "{{ base_url }}/api/v2/admin/registrations/{{ event_code }}",
+      "headers": [
+        {
+          "name": "Authorization",
+          "value": "Bearer {{ access_token }}"
+        }
+      ],
+      "body": {},
+      "metaSortKey": -2,
+      "parameters": [
+        {
+          "name": "page",
+          "value": "1",
+          "id": "",
+          "disabled": false
+        },
+        {
+          "name": "per_page",
+          "value": "20",
+          "id": "",
+          "disabled": false
+        }
+      ]
+    },
+    {
+      "_id": "req_095",
+      "_type": "request",
+      "parentId": "fld_adm_regs",
+      "name": "Create Registration (admin)",
+      "method": "POST",
+      "url": "{{ base_url }}/api/v2/admin/registrations/{{ event_code }}",
+      "headers": [
+        {
+          "name": "Authorization",
+          "value": "Bearer {{ access_token }}"
+        },
+        {
+          "name": "Content-Type",
+          "value": "application/json"
+        }
+      ],
+      "body": {
+        "mimeType": "application/json",
+        "text": "{\n  \"full_name\": \"Sena Adzoa\",\n  \"email\": \"sena@example.com\",\n  \"phone\": \"+228 92 34 56 78\",\n  \"organization\": \"Universit\u00e9 de Lom\u00e9\",\n  \"ticket_type\": \"student\"\n}"
+      },
+      "metaSortKey": -3
+    },
+    {
+      "_id": "req_096",
+      "_type": "request",
+      "parentId": "fld_adm_regs",
+      "name": "Get Registration Detail",
+      "method": "GET",
+      "url": "{{ base_url }}/api/v2/admin/registrations/detail/{{ registration_id }}",
+      "headers": [
+        {
+          "name": "Authorization",
+          "value": "Bearer {{ access_token }}"
+        }
+      ],
+      "body": {},
+      "metaSortKey": -4
+    },
+    {
+      "_id": "req_097",
+      "_type": "request",
+      "parentId": "fld_adm_regs",
+      "name": "Update Registration",
+      "method": "PUT",
+      "url": "{{ base_url }}/api/v2/admin/registrations/{{ registration_id }}",
+      "headers": [
+        {
+          "name": "Authorization",
+          "value": "Bearer {{ access_token }}"
+        },
+        {
+          "name": "Content-Type",
+          "value": "application/json"
+        }
+      ],
+      "body": {
+        "mimeType": "application/json",
+        "text": "{\n  \"notes\": \"Acc\u00e8s VIP accord\u00e9\",\n  \"ticket_type\": \"vip\"\n}"
+      },
+      "metaSortKey": -5
+    },
+    {
+      "_id": "req_098",
+      "_type": "request",
+      "parentId": "fld_adm_regs",
+      "name": "Change Registration Status",
+      "method": "PATCH",
+      "url": "{{ base_url }}/api/v2/admin/registrations/{{ registration_id }}/status",
+      "headers": [
+        {
+          "name": "Authorization",
+          "value": "Bearer {{ access_token }}"
+        },
+        {
+          "name": "Content-Type",
+          "value": "application/json"
+        }
+      ],
+      "body": {
+        "mimeType": "application/json",
+        "text": "{\n  \"status\": \"confirmed\"\n}"
+      },
+      "metaSortKey": -6
+    },
+    {
+      "_id": "req_099",
+      "_type": "request",
+      "parentId": "fld_adm_regs",
+      "name": "Delete Registration",
+      "method": "DELETE",
+      "url": "{{ base_url }}/api/v2/admin/registrations/{{ registration_id }}",
+      "headers": [
+        {
+          "name": "Authorization",
+          "value": "Bearer {{ access_token }}"
+        }
+      ],
+      "body": {},
+      "metaSortKey": -7
+    },
+    {
+      "_id": "req_100",
+      "_type": "request",
+      "parentId": "fld_adm_speakers",
+      "name": "List All Speakers",
+      "method": "GET",
+      "url": "{{ base_url }}/api/v2/admin/speakers",
+      "headers": [
+        {
+          "name": "Authorization",
+          "value": "Bearer {{ access_token }}"
+        }
+      ],
+      "body": {},
+      "metaSortKey": -1,
+      "parameters": [
+        {
+          "name": "page",
+          "value": "1",
+          "id": "",
+          "disabled": false
+        },
+        {
+          "name": "per_page",
+          "value": "20",
+          "id": "",
+          "disabled": false
+        }
+      ]
+    },
+    {
+      "_id": "req_101",
+      "_type": "request",
+      "parentId": "fld_adm_speakers",
+      "name": "List Speakers by Event",
+      "method": "GET",
+      "url": "{{ base_url }}/api/v2/admin/speakers/event/{{ event_code }}",
+      "headers": [
+        {
+          "name": "Authorization",
+          "value": "Bearer {{ access_token }}"
+        }
+      ],
+      "body": {},
+      "metaSortKey": -2,
+      "parameters": [
+        {
+          "name": "page",
+          "value": "1",
+          "id": "",
+          "disabled": false
+        },
+        {
+          "name": "per_page",
+          "value": "20",
+          "id": "",
+          "disabled": false
+        }
+      ]
+    },
+    {
+      "_id": "req_102",
+      "_type": "request",
+      "parentId": "fld_adm_speakers",
+      "name": "Create Speaker",
+      "method": "POST",
+      "url": "{{ base_url }}/api/v2/admin/speakers/event/{{ event_code }}",
+      "headers": [
+        {
+          "name": "Authorization",
+          "value": "Bearer {{ access_token }}"
+        },
+        {
+          "name": "Content-Type",
+          "value": "application/json"
+        }
+      ],
+      "body": {
+        "mimeType": "application/json",
+        "text": "{\n  \"first_name\": \"Ama\",\n  \"last_name\": \"Kodjovi\",\n  \"full_name\": \"Ama Kodjovi\",\n  \"email\": \"ama@example.com\",\n  \"headline\": \"Backend Developer & Python Enthusiast\",\n  \"organization\": \"Python Togo\",\n  \"country\": \"Togo\",\n  \"bio\": \"D\u00e9veloppeuse backend avec 5 ans d'exp\u00e9rience en Python et FastAPI.\",\n  \"social_links\": {\n    \"twitter\": \"https://twitter.com/ama\",\n    \"linkedin\": \"https://linkedin.com/in/ama\"\n  },\n  \"website_url\": \"https://ama.dev\"\n}"
+      },
+      "metaSortKey": -3
+    },
+    {
+      "_id": "req_103",
+      "_type": "request",
+      "parentId": "fld_adm_speakers",
+      "name": "Get Speaker",
+      "method": "GET",
+      "url": "{{ base_url }}/api/v2/admin/speakers/{{ speaker_id }}",
+      "headers": [
+        {
+          "name": "Authorization",
+          "value": "Bearer {{ access_token }}"
+        }
+      ],
+      "body": {},
+      "metaSortKey": -4
+    },
+    {
+      "_id": "req_104",
+      "_type": "request",
+      "parentId": "fld_adm_speakers",
+      "name": "Update Speaker",
+      "method": "PUT",
+      "url": "{{ base_url }}/api/v2/admin/speakers/{{ speaker_id }}",
+      "headers": [
+        {
+          "name": "Authorization",
+          "value": "Bearer {{ access_token }}"
+        },
+        {
+          "name": "Content-Type",
+          "value": "application/json"
+        }
+      ],
+      "body": {
+        "mimeType": "application/json",
+        "text": "{\n  \"headline\": \"Senior Backend Developer & OSS Contributor\",\n  \"organization\": \"Python Software Foundation\"\n}"
+      },
+      "metaSortKey": -5
+    },
+    {
+      "_id": "req_105",
+      "_type": "request",
+      "parentId": "fld_adm_speakers",
+      "name": "Upload Speaker Photo",
+      "method": "POST",
+      "url": "{{ base_url }}/api/v2/admin/speakers/{{ speaker_id }}/photo",
+      "headers": [
+        {
+          "name": "Authorization",
+          "value": "Bearer {{ access_token }}"
+        }
+      ],
+      "body": {
+        "mimeType": "multipart/form-data",
+        "params": [
+          {
+            "name": "file",
+            "type": "file",
+            "fileName": ""
+          }
+        ]
+      },
+      "metaSortKey": -6
+    },
+    {
+      "_id": "req_106",
+      "_type": "request",
+      "parentId": "fld_adm_speakers",
+      "name": "Delete Speaker",
+      "method": "DELETE",
+      "url": "{{ base_url }}/api/v2/admin/speakers/{{ speaker_id }}",
+      "headers": [
+        {
+          "name": "Authorization",
+          "value": "Bearer {{ access_token }}"
+        }
+      ],
+      "body": {},
+      "metaSortKey": -7
+    },
+    {
+      "_id": "req_107",
+      "_type": "request",
+      "parentId": "fld_adm_sessions",
+      "name": "List All Sessions",
+      "method": "GET",
+      "url": "{{ base_url }}/api/v2/admin/sessions",
+      "headers": [
+        {
+          "name": "Authorization",
+          "value": "Bearer {{ access_token }}"
+        }
+      ],
+      "body": {},
+      "metaSortKey": -1,
+      "parameters": [
+        {
+          "name": "page",
+          "value": "1",
+          "id": "",
+          "disabled": false
+        },
+        {
+          "name": "per_page",
+          "value": "20",
+          "id": "",
+          "disabled": false
+        }
+      ]
+    },
+    {
+      "_id": "req_108",
+      "_type": "request",
+      "parentId": "fld_adm_sessions",
+      "name": "List Sessions by Event",
+      "method": "GET",
+      "url": "{{ base_url }}/api/v2/admin/sessions/event/{{ event_code }}",
+      "headers": [
+        {
+          "name": "Authorization",
+          "value": "Bearer {{ access_token }}"
+        }
+      ],
+      "body": {},
+      "metaSortKey": -2,
+      "parameters": [
+        {
+          "name": "page",
+          "value": "1",
+          "id": "",
+          "disabled": false
+        },
+        {
+          "name": "per_page",
+          "value": "20",
+          "id": "",
+          "disabled": false
+        }
+      ]
+    },
+    {
+      "_id": "req_109",
+      "_type": "request",
+      "parentId": "fld_adm_sessions",
+      "name": "Get Event Schedule",
+      "method": "GET",
+      "url": "{{ base_url }}/api/v2/admin/sessions/event/{{ event_code }}/schedule",
+      "headers": [
+        {
+          "name": "Authorization",
+          "value": "Bearer {{ access_token }}"
+        }
+      ],
+      "body": {},
+      "metaSortKey": -3
+    },
+    {
+      "_id": "req_110",
+      "_type": "request",
+      "parentId": "fld_adm_sessions",
+      "name": "Create Session",
+      "method": "POST",
+      "url": "{{ base_url }}/api/v2/admin/sessions/event/{{ event_code }}",
+      "headers": [
+        {
+          "name": "Authorization",
+          "value": "Bearer {{ access_token }}"
+        },
+        {
+          "name": "Content-Type",
+          "value": "application/json"
+        }
+      ],
+      "body": {
+        "mimeType": "application/json",
+        "text": "{\n  \"venue_id\": \"{{ event_id }}\",\n  \"track_id\": \"{{ track_id }}\",\n  \"speaker_id\": \"{{ speaker_id }}\",\n  \"title\": \"Introduction \u00e0 FastAPI\",\n  \"slug\": \"intro-fastapi-2025\",\n  \"session_type\": \"talk\",\n  \"starts_at\": \"2025-11-15T09:00:00Z\",\n  \"ends_at\": \"2025-11-15T09:45:00Z\",\n  \"description\": \"Un talk d'introduction \u00e0 FastAPI pour les d\u00e9veloppeurs Python.\"\n}"
+      },
+      "metaSortKey": -4
+    },
+    {
+      "_id": "req_111",
+      "_type": "request",
+      "parentId": "fld_adm_sessions",
+      "name": "Get Session",
+      "method": "GET",
+      "url": "{{ base_url }}/api/v2/admin/sessions/{{ session_id }}",
+      "headers": [
+        {
+          "name": "Authorization",
+          "value": "Bearer {{ access_token }}"
+        }
+      ],
+      "body": {},
+      "metaSortKey": -5
+    },
+    {
+      "_id": "req_112",
+      "_type": "request",
+      "parentId": "fld_adm_sessions",
+      "name": "Update Session",
+      "method": "PUT",
+      "url": "{{ base_url }}/api/v2/admin/sessions/{{ session_id }}",
+      "headers": [
+        {
+          "name": "Authorization",
+          "value": "Bearer {{ access_token }}"
+        },
+        {
+          "name": "Content-Type",
+          "value": "application/json"
+        }
+      ],
+      "body": {
+        "mimeType": "application/json",
+        "text": "{\n  \"title\": \"Ma\u00eetriser FastAPI \u2014 Advanced\",\n  \"starts_at\": \"2025-11-15T10:00:00Z\",\n  \"ends_at\": \"2025-11-15T11:00:00Z\"\n}"
+      },
+      "metaSortKey": -6
+    },
+    {
+      "_id": "req_113",
+      "_type": "request",
+      "parentId": "fld_adm_sessions",
+      "name": "Delete Session",
+      "method": "DELETE",
+      "url": "{{ base_url }}/api/v2/admin/sessions/{{ session_id }}",
+      "headers": [
+        {
+          "name": "Authorization",
+          "value": "Bearer {{ access_token }}"
+        }
+      ],
+      "body": {},
+      "metaSortKey": -7
+    },
+    {
+      "_id": "req_114",
+      "_type": "request",
+      "parentId": "fld_adm_packages",
+      "name": "List Sponsor Packages by Event",
+      "method": "GET",
+      "url": "{{ base_url }}/api/v2/admin/sponsor-packages/event/{{ event_code }}",
+      "headers": [
+        {
+          "name": "Authorization",
+          "value": "Bearer {{ access_token }}"
+        }
+      ],
+      "body": {},
+      "metaSortKey": -1
+    },
+    {
+      "_id": "req_115",
+      "_type": "request",
+      "parentId": "fld_adm_packages",
+      "name": "Create Sponsor Package",
+      "method": "POST",
+      "url": "{{ base_url }}/api/v2/admin/sponsor-packages/event/{{ event_code }}",
+      "headers": [
+        {
+          "name": "Authorization",
+          "value": "Bearer {{ access_token }}"
+        },
+        {
+          "name": "Content-Type",
+          "value": "application/json"
+        }
+      ],
+      "body": {
+        "mimeType": "application/json",
+        "text": "{\n  \"name\": \"Gold Package\",\n  \"tier\": \"gold\",\n  \"description\": \"Package gold pour sponsors premium\",\n  \"price\": \"500000.00\",\n  \"benefits\": [\"Logo sur le site\", \"Stand d'exposition\", \"3 tickets\", \"Mention dans le programme\"],\n  \"max_slots\": 5,\n  \"is_active\": true\n}"
+      },
+      "metaSortKey": -2
+    },
+    {
+      "_id": "req_116",
+      "_type": "request",
+      "parentId": "fld_adm_packages",
+      "name": "Get Sponsor Package",
+      "method": "GET",
+      "url": "{{ base_url }}/api/v2/admin/sponsor-packages/{{ package_id }}",
+      "headers": [
+        {
+          "name": "Authorization",
+          "value": "Bearer {{ access_token }}"
+        }
+      ],
+      "body": {},
+      "metaSortKey": -3
+    },
+    {
+      "_id": "req_117",
+      "_type": "request",
+      "parentId": "fld_adm_packages",
+      "name": "Update Sponsor Package",
+      "method": "PUT",
+      "url": "{{ base_url }}/api/v2/admin/sponsor-packages/{{ package_id }}",
+      "headers": [
+        {
+          "name": "Authorization",
+          "value": "Bearer {{ access_token }}"
+        },
+        {
+          "name": "Content-Type",
+          "value": "application/json"
+        }
+      ],
+      "body": {
+        "mimeType": "application/json",
+        "text": "{\n  \"price\": \"600000.00\",\n  \"max_slots\": 3,\n  \"benefits\": [\"Logo sur le site\", \"Stand premium\", \"5 tickets\", \"Keynote slot\"]\n}"
+      },
+      "metaSortKey": -4
+    },
+    {
+      "_id": "req_118",
+      "_type": "request",
+      "parentId": "fld_adm_packages",
+      "name": "Delete Sponsor Package",
+      "method": "DELETE",
+      "url": "{{ base_url }}/api/v2/admin/sponsor-packages/{{ package_id }}",
+      "headers": [
+        {
+          "name": "Authorization",
+          "value": "Bearer {{ access_token }}"
+        }
+      ],
+      "body": {},
+      "metaSortKey": -5
+    },
+    {
+      "_id": "req_119",
+      "_type": "request",
+      "parentId": "fld_adm_packages",
+      "name": "Assign Package to Sponsor",
+      "method": "PATCH",
+      "url": "{{ base_url }}/api/v2/admin/sponsor-packages/sponsors/{{ sponsor_id }}/assign",
+      "headers": [
+        {
+          "name": "Authorization",
+          "value": "Bearer {{ access_token }}"
+        }
+      ],
+      "parameters": [
+        {
+          "name": "package_id",
+          "value": "{{ package_id }}",
+          "disabled": false
+        }
+      ],
+      "body": {},
+      "metaSortKey": -6
+    },
+    {
+      "_id": "req_120",
+      "_type": "request",
+      "parentId": "fld_adm_rbac",
+      "name": "List All Permissions",
+      "method": "GET",
+      "url": "{{ base_url }}/api/v2/admin/permissions",
+      "headers": [
+        {
+          "name": "Authorization",
+          "value": "Bearer {{ access_token }}"
+        }
+      ],
+      "body": {},
+      "metaSortKey": -1
+    },
+    {
+      "_id": "req_121",
+      "_type": "request",
+      "parentId": "fld_adm_rbac",
+      "name": "List All Roles",
+      "method": "GET",
+      "url": "{{ base_url }}/api/v2/admin/roles",
+      "headers": [
+        {
+          "name": "Authorization",
+          "value": "Bearer {{ access_token }}"
+        }
+      ],
+      "body": {},
+      "metaSortKey": -2
+    },
+    {
+      "_id": "req_122",
+      "_type": "request",
+      "parentId": "fld_adm_rbac",
+      "name": "Get Role Detail",
+      "method": "GET",
+      "url": "{{ base_url }}/api/v2/admin/roles/{{ role_id }}",
+      "headers": [
+        {
+          "name": "Authorization",
+          "value": "Bearer {{ access_token }}"
+        }
+      ],
+      "body": {},
+      "metaSortKey": -3
+    },
+    {
+      "_id": "req_123",
+      "_type": "request",
+      "parentId": "fld_adm_rbac",
+      "name": "Create Role",
+      "method": "POST",
+      "url": "{{ base_url }}/api/v2/admin/roles",
+      "headers": [
+        {
+          "name": "Authorization",
+          "value": "Bearer {{ access_token }}"
+        },
+        {
+          "name": "Content-Type",
+          "value": "application/json"
+        }
+      ],
+      "body": {
+        "mimeType": "application/json",
+        "text": "{\n  \"name\": \"moderator\",\n  \"description\": \"Mod\u00e9rateur de la communaut\u00e9\"\n}"
+      },
+      "metaSortKey": -4
+    },
+    {
+      "_id": "req_124",
+      "_type": "request",
+      "parentId": "fld_adm_rbac",
+      "name": "Update Role",
+      "method": "PUT",
+      "url": "{{ base_url }}/api/v2/admin/roles/{{ role_id }}",
+      "headers": [
+        {
+          "name": "Authorization",
+          "value": "Bearer {{ access_token }}"
+        },
+        {
+          "name": "Content-Type",
+          "value": "application/json"
+        }
+      ],
+      "body": {
+        "mimeType": "application/json",
+        "text": "{\n  \"description\": \"Mod\u00e9rateur avec acc\u00e8s \u00e9tendu\"\n}"
+      },
+      "metaSortKey": -5
+    },
+    {
+      "_id": "req_125",
+      "_type": "request",
+      "parentId": "fld_adm_rbac",
+      "name": "Delete Role",
+      "method": "DELETE",
+      "url": "{{ base_url }}/api/v2/admin/roles/{{ role_id }}",
+      "headers": [
+        {
+          "name": "Authorization",
+          "value": "Bearer {{ access_token }}"
+        }
+      ],
+      "body": {},
+      "metaSortKey": -6
+    },
+    {
+      "_id": "req_126",
+      "_type": "request",
+      "parentId": "fld_adm_rbac",
+      "name": "Assign Permissions to Role",
+      "method": "POST",
+      "url": "{{ base_url }}/api/v2/admin/roles/{{ role_id }}/permissions",
+      "headers": [
+        {
+          "name": "Authorization",
+          "value": "Bearer {{ access_token }}"
+        },
+        {
+          "name": "Content-Type",
+          "value": "application/json"
+        }
+      ],
+      "body": {
+        "mimeType": "application/json",
+        "text": "{\n  \"permission_ids\": [\n    \"{{ permission_id }}\"\n  ]\n}"
+      },
+      "metaSortKey": -7
+    },
+    {
+      "_id": "req_127",
+      "_type": "request",
+      "parentId": "fld_adm_rbac",
+      "name": "Remove Permission from Role",
+      "method": "DELETE",
+      "url": "{{ base_url }}/api/v2/admin/roles/{{ role_id }}/permissions/{{ permission_id }}",
+      "headers": [
+        {
+          "name": "Authorization",
+          "value": "Bearer {{ access_token }}"
+        }
+      ],
+      "body": {},
+      "metaSortKey": -8
+    },
+    {
+      "_id": "req_128",
+      "_type": "request",
+      "parentId": "fld_adm_rbac",
+      "name": "Get User Roles",
+      "method": "GET",
+      "url": "{{ base_url }}/api/v2/admin/users/{{ user_id }}/roles",
+      "headers": [
+        {
+          "name": "Authorization",
+          "value": "Bearer {{ access_token }}"
+        }
+      ],
+      "body": {},
+      "metaSortKey": -9
+    },
+    {
+      "_id": "req_129",
+      "_type": "request",
+      "parentId": "fld_adm_rbac",
+      "name": "Assign Role to User",
+      "method": "POST",
+      "url": "{{ base_url }}/api/v2/admin/users/{{ user_id }}/roles",
+      "headers": [
+        {
+          "name": "Authorization",
+          "value": "Bearer {{ access_token }}"
+        },
+        {
+          "name": "Content-Type",
+          "value": "application/json"
+        }
+      ],
+      "body": {
+        "mimeType": "application/json",
+        "text": "{\n  \"role_id\": \"{{ role_id }}\"\n}"
+      },
+      "metaSortKey": -10
+    },
+    {
+      "_id": "req_130",
+      "_type": "request",
+      "parentId": "fld_adm_rbac",
+      "name": "Remove Role from User",
+      "method": "DELETE",
+      "url": "{{ base_url }}/api/v2/admin/users/{{ user_id }}/roles/{{ role_id }}",
+      "headers": [
+        {
+          "name": "Authorization",
+          "value": "Bearer {{ access_token }}"
+        }
+      ],
+      "body": {},
+      "metaSortKey": -11
+    },
+    {
+      "_id": "req_131",
+      "_type": "request",
+      "parentId": "fld_adm_cfp",
+      "name": "List Talks with Avg Scores",
+      "method": "GET",
+      "url": "{{ base_url }}/api/v2/admin/cfp/talks",
+      "headers": [
+        {
+          "name": "Authorization",
+          "value": "Bearer {{ access_token }}"
+        }
+      ],
+      "body": {},
+      "metaSortKey": -1,
+      "parameters": [
+        {
+          "name": "page",
+          "value": "1",
+          "id": "",
+          "disabled": false
+        },
+        {
+          "name": "per_page",
+          "value": "20",
+          "id": "",
+          "disabled": false
+        }
+      ]
+    },
+    {
+      "_id": "req_132",
+      "_type": "request",
+      "parentId": "fld_adm_cfp",
+      "name": "Get Talk Detail (with reviews)",
+      "method": "GET",
+      "url": "{{ base_url }}/api/v2/admin/cfp/talks/{{ proposal_id }}",
+      "headers": [
+        {
+          "name": "Authorization",
+          "value": "Bearer {{ access_token }}"
+        }
+      ],
+      "body": {},
+      "metaSortKey": -2
+    },
+    {
+      "_id": "req_133",
+      "_type": "request",
+      "parentId": "fld_adm_cfp",
+      "name": "Submit Review",
+      "method": "POST",
+      "url": "{{ base_url }}/api/v2/admin/cfp/talks/{{ proposal_id }}/reviews",
+      "headers": [
+        {
+          "name": "Authorization",
+          "value": "Bearer {{ access_token }}"
+        },
+        {
+          "name": "Content-Type",
+          "value": "application/json"
+        }
+      ],
+      "body": {
+        "mimeType": "application/json",
+        "text": "{\n  \"score\": 4,\n  \"comment\": \"Excellent sujet, tr\u00e8s bien pr\u00e9sent\u00e9. Le speaker a une bonne ma\u00eetrise du sujet.\"\n}"
+      },
+      "metaSortKey": -3
+    },
+    {
+      "_id": "req_134",
+      "_type": "request",
+      "parentId": "fld_adm_cfp",
+      "name": "Get Reviews (masked if not voted)",
+      "method": "GET",
+      "url": "{{ base_url }}/api/v2/admin/cfp/talks/{{ proposal_id }}/reviews",
+      "headers": [
+        {
+          "name": "Authorization",
+          "value": "Bearer {{ access_token }}"
+        }
+      ],
+      "body": {},
+      "metaSortKey": -4
+    },
+    {
+      "_id": "req_135",
+      "_type": "request",
+      "parentId": "fld_adm_cfp",
+      "name": "Update Talk Status (+ email speaker)",
+      "method": "PATCH",
+      "url": "{{ base_url }}/api/v2/admin/cfp/talks/{{ proposal_id }}/status",
+      "headers": [
+        {
+          "name": "Authorization",
+          "value": "Bearer {{ access_token }}"
+        },
+        {
+          "name": "Content-Type",
+          "value": "application/json"
+        }
+      ],
+      "body": {
+        "mimeType": "application/json",
+        "text": "{\n  \"status\": \"accepted\"\n}"
+      },
+      "metaSortKey": -5
+    }
+  ]
+}

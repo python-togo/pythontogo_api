@@ -186,6 +186,12 @@ class UserSummary(BaseModel):
     created_at: datetime
 
 
+class AuthenticatedUser(UserSummary):
+    """UserSummary enriched with RBAC claims extracted from the JWT."""
+    is_admin: bool = False
+    permissions: list[str] = Field(default_factory=list)
+
+
 class TokenResponse(BaseModel):
     access_token: str
     refresh_token: str
@@ -638,3 +644,85 @@ class SessionUpdate(BaseModel):
     description: str | None = None
     updated_at: datetime = Field(
         default_factory=lambda: datetime.now(timezone.utc))
+
+
+# ── RBAC ──────────────────────────────────────────────────────────────────────
+
+class PermissionSummary(BaseModel):
+    id: UUID
+    name: str
+    description: str | None
+    resource: str
+    action: str
+    created_at: datetime
+
+
+class RoleSummary(BaseModel):
+    id: UUID
+    name: str
+    description: str | None
+    is_system: bool
+    created_at: datetime
+    updated_at: datetime
+
+
+class RoleDetail(RoleSummary):
+    permissions: list[PermissionSummary] = Field(default_factory=list)
+
+
+class RoleCreate(BaseModel):
+    name: str
+    description: str | None = None
+
+
+class RoleUpdate(BaseModel):
+    name: str | None = None
+    description: str | None = None
+
+
+class AssignPermissionsRequest(BaseModel):
+    permission_ids: list[UUID]
+
+
+class AssignRoleRequest(BaseModel):
+    role_id: UUID
+
+
+class UserRoleAssignment(BaseModel):
+    user_id: UUID
+    role_id: UUID
+    role_name: str
+    assigned_at: datetime
+
+
+# ── CFP Review ────────────────────────────────────────────────────────────────
+
+class TalkReviewCreate(BaseModel):
+    score: int = Field(..., ge=1, le=5, description="Rating from 1 (poor) to 5 (excellent)")
+    comment: str | None = None
+
+
+class TalkReviewSummary(BaseModel):
+    id: UUID
+    proposal_id: UUID
+    reviewer_id: UUID
+    score: int
+    comment: str | None
+    created_at: datetime
+    updated_at: datetime
+
+
+class TalkReviewMasked(BaseModel):
+    """Returned to reviewers who have not yet voted — hides individual scores."""
+    proposal_id: UUID
+    has_reviewed: bool
+    total_reviews: int
+
+
+class TalkStatusUpdate(BaseModel):
+    status: SubmissionStatus
+
+
+class ProposalWithScore(ProposalSummary):
+    avg_score: float | None = None
+    review_count: int = 0

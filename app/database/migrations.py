@@ -374,6 +374,74 @@ CREATE_TABLE_QUERIES = [
     """,
 
     """
+    CREATE TABLE IF NOT EXISTS permissions (
+        id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+        name VARCHAR(100) NOT NULL UNIQUE,
+        description TEXT,
+        resource VARCHAR(50) NOT NULL,
+        action VARCHAR(50) NOT NULL,
+        created_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
+        CONSTRAINT uq_permissions_resource_action UNIQUE (resource, action)
+    );
+    """,
+
+    """
+    CREATE TABLE IF NOT EXISTS roles (
+        id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+        name VARCHAR(100) NOT NULL UNIQUE,
+        description TEXT,
+        is_system BOOLEAN NOT NULL DEFAULT FALSE,
+        created_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
+        updated_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
+    );
+    """,
+
+    """
+    CREATE TABLE IF NOT EXISTS role_permissions (
+        role_id UUID NOT NULL,
+        permission_id UUID NOT NULL,
+        PRIMARY KEY (role_id, permission_id),
+        CONSTRAINT fk_rp_role
+            FOREIGN KEY (role_id) REFERENCES roles(id) ON DELETE CASCADE,
+        CONSTRAINT fk_rp_permission
+            FOREIGN KEY (permission_id) REFERENCES permissions(id) ON DELETE CASCADE
+    );
+    """,
+
+    """
+    CREATE TABLE IF NOT EXISTS user_roles (
+        user_id UUID NOT NULL,
+        role_id UUID NOT NULL,
+        assigned_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
+        assigned_by UUID,
+        PRIMARY KEY (user_id, role_id),
+        CONSTRAINT fk_ur_user
+            FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE,
+        CONSTRAINT fk_ur_role
+            FOREIGN KEY (role_id) REFERENCES roles(id) ON DELETE CASCADE,
+        CONSTRAINT fk_ur_assigned_by
+            FOREIGN KEY (assigned_by) REFERENCES users(id) ON DELETE SET NULL
+    );
+    """,
+
+    """
+    CREATE TABLE IF NOT EXISTS talk_reviews (
+        id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+        proposal_id UUID NOT NULL,
+        reviewer_id UUID NOT NULL,
+        score SMALLINT NOT NULL CHECK (score BETWEEN 1 AND 5),
+        comment TEXT,
+        created_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
+        updated_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
+        CONSTRAINT fk_tr_proposal
+            FOREIGN KEY (proposal_id) REFERENCES proposals(id) ON DELETE CASCADE,
+        CONSTRAINT fk_tr_reviewer
+            FOREIGN KEY (reviewer_id) REFERENCES users(id) ON DELETE CASCADE,
+        CONSTRAINT uq_tr_proposal_reviewer UNIQUE (proposal_id, reviewer_id)
+    );
+    """,
+
+    """
     CREATE TABLE IF NOT EXISTS categories (
         id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
         name VARCHAR(255) NOT NULL,
@@ -531,6 +599,26 @@ CREATE_INDEX_QUERIES = [
     "CREATE INDEX IF NOT EXISTS idx_orders_event_id ON shop_orders(event_id);",
     "CREATE INDEX IF NOT EXISTS idx_orders_user_id ON shop_orders(user_id);",
     "CREATE INDEX IF NOT EXISTS idx_order_items_order_id ON order_items(order_id);",
+    "CREATE INDEX IF NOT EXISTS idx_role_permissions_role_id ON role_permissions(role_id);",
+    "CREATE INDEX IF NOT EXISTS idx_role_permissions_permission_id ON role_permissions(permission_id);",
+    "CREATE INDEX IF NOT EXISTS idx_user_roles_user_id ON user_roles(user_id);",
+    "CREATE INDEX IF NOT EXISTS idx_user_roles_role_id ON user_roles(role_id);",
+    "CREATE INDEX IF NOT EXISTS idx_permissions_resource ON permissions(resource);",
+    "CREATE INDEX IF NOT EXISTS idx_talk_reviews_proposal_id ON talk_reviews(proposal_id);",
+    "CREATE INDEX IF NOT EXISTS idx_talk_reviews_reviewer_id ON talk_reviews(reviewer_id);",
+]
+
+
+CREATE_VIEW_QUERIES = [
+    """
+    CREATE OR REPLACE VIEW talk_avg_scores AS
+    SELECT
+        proposal_id,
+        ROUND(AVG(score)::numeric, 2) AS avg_score,
+        COUNT(*) AS review_count
+    FROM talk_reviews
+    GROUP BY proposal_id;
+    """,
 ]
 
 
@@ -552,6 +640,8 @@ def create_tables():
             cur.execute(query)
         for query in CREATE_INDEX_QUERIES:
             cur.execute(query)
+        for query in CREATE_VIEW_QUERIES:
+            cur.execute(query)
     conn.commit()
     return (
         CREATE_EXTENSIONS_QUERY
@@ -563,6 +653,8 @@ def create_tables():
         + "\n".join(ALTER_TABLE_QUERIES)
         + "\n"
         + "\n".join(CREATE_INDEX_QUERIES)
+        + "\n"
+        + "\n".join(CREATE_VIEW_QUERIES)
     )
 
 
