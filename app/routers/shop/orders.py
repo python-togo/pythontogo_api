@@ -8,6 +8,7 @@ from app.database.orm import select, update
 from app.schemas.shop import OrderSummary, OrderDetail, OrderStatusUpdate, OrderItemSummary, OrderStatus
 from app.core.security import require_admin
 from app.utils.responses import success
+from app.utils.pagination import paginate
 
 api_router = APIRouter(prefix="/orders", tags=["shop-orders"])
 
@@ -17,29 +18,27 @@ async def list_orders(
     event_id: UUID | None = Query(default=None),
     status_filter: OrderStatus | None = Query(default=None, alias="status"),
     user_id: UUID | None = Query(default=None),
-    limit: int = Query(default=50, ge=1, le=500),
-    offset: int = Query(default=0, ge=0),
+    page: int = Query(default=1, ge=1),
+    per_page: int = Query(default=20, ge=1, le=100),
     db=Depends(get_db_connection),
     _=Depends(require_admin),
 ):
-    conditions, values = [], []
+    conditions: list[str] = []
+    params: list = []
     if event_id:
-        conditions.append("event_id = %s"); values.append(str(event_id))
+        conditions.append("event_id = %s")
+        params.append(str(event_id))
     if status_filter:
-        conditions.append("status = %s"); values.append(status_filter.value)
+        conditions.append("status = %s")
+        params.append(status_filter.value)
     if user_id:
-        conditions.append("user_id = %s"); values.append(str(user_id))
+        conditions.append("user_id = %s")
+        params.append(str(user_id))
 
     where = f"WHERE {' AND '.join(conditions)}" if conditions else ""
-    values += [limit, offset]
-
-    async with db.cursor(row_factory=dict_row) as cur:
-        await cur.execute(
-            f"SELECT * FROM shop_orders {where} ORDER BY created_at DESC LIMIT %s OFFSET %s",
-            tuple(values),
-        )
-        rows = await cur.fetchall()
-    return success(rows or [], total=len(rows))
+    sql = f"SELECT * FROM shop_orders {where} ORDER BY created_at DESC"
+    rows, total = await paginate(db, sql, tuple(params), page, per_page)
+    return success(rows, total=total, page=page, per_page=per_page)
 
 
 @api_router.get("/{order_id}")

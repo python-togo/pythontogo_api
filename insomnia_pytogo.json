@@ -1654,13 +1654,15 @@
           "disabled": true
         },
         {
-          "name": "limit",
-          "value": "50",
+          "name": "page",
+          "value": "1",
+          "id": "",
           "disabled": false
         },
         {
-          "name": "offset",
-          "value": "0",
+          "name": "per_page",
+          "value": "20",
+          "id": "",
           "disabled": false
         }
       ],

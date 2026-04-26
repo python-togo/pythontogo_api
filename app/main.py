@@ -107,12 +107,12 @@ async def generic_exception_handler(request: Request, exc: Exception):
 @app.get("/")
 async def welcome(request: Request):
     docs_url = f"{request.base_url}docs"
-    return {
+    return success({
         "message": "Welcome to Python Togo official api",
         "version": "2.1.0",
         "author": "Python Software Community Togo",
-        "documentations": docs_url
-    }
+        "documentations": docs_url,
+    })
 
 
 @app.get("/favicon.ico", include_in_schema=False)
