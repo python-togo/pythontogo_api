@@ -1,9 +1,9 @@
 from fastapi import APIRouter, Depends
 from psycopg.rows import dict_row
 
-from app.core.security import require_admin, decode_token
+from app.core.security import require_admin, decode_token, generate_api_key
 from app.database.connection import get_db_connection, get_redis_client
-from app.schemas.models import APIKeySummaryAdmin, ActiveSession, SecurityOverview
+from app.schemas.models import APIKeyCreate, APIKeySummaryAdmin, ActiveSession, SecurityOverview
 from app.utils.responses import success
 
 api_router = APIRouter(prefix="/security", tags=["admin-security"])
@@ -34,6 +34,27 @@ async def get_security_overview(
         active_carts=len(active_carts),
     )
     return success(data)
+
+
+@api_router.post("/api-keys", status_code=201)
+async def create_api_key(
+    payload: APIKeyCreate,
+    db=Depends(get_db_connection),
+    _=Depends(require_admin),
+):
+    key_value = generate_api_key()
+    async with db.cursor(row_factory=dict_row) as cur:
+        await cur.execute(
+            """
+            INSERT INTO api_keys (name, key_value, event_id)
+            VALUES (%s, %s, %s)
+            RETURNING id, name, key_value, event_id, created_at
+            """,
+            (payload.name, key_value, payload.event_id),
+        )
+        row = await cur.fetchone()
+    return success({"id": row["id"], "name": row["name"], "key_value": row["key_value"],
+                    "event_id": row["event_id"], "created_at": row["created_at"]}, code=201)
 
 
 @api_router.get("/api-keys")

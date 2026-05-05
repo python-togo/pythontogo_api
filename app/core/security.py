@@ -13,22 +13,20 @@ from app.schemas.models import (
     UserRole,
 )
 from app.core.settings import settings
-from passlib.context import CryptContext
 from datetime import datetime, timedelta, timezone
 import jwt
+import bcrypt
 from psycopg.rows import dict_row
 
 security = HTTPBearer()
 
-pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
-
 
 def hash_password(password: str) -> str:
-    return pwd_context.hash(password)
+    return bcrypt.hashpw(password.encode(), bcrypt.gensalt()).decode()
 
 
 def verify_password(plain: str, hashed: str) -> bool:
-    return pwd_context.verify(plain, hashed)
+    return bcrypt.checkpw(plain.encode(), hashed.encode())
 
 
 def create_access_token(data: dict) -> str:

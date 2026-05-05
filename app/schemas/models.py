@@ -203,6 +203,11 @@ class TokenData(BaseModel):
     email: str | None = None
 
 
+class APIKeyCreate(BaseModel):
+    name: str
+    event_id: UUID | None = None
+
+
 class APIKeyResponse(BaseModel):
     api_key: str
 
