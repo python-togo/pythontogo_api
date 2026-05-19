@@ -221,33 +221,59 @@ CREATE_TABLE_QUERIES = [
             ON DELETE CASCADE
     );""",
     """
-    CREATE TABLE IF NOT EXISTS proposals (
+    CREATE TABLE IF NOT EXISTS topics (
+        id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+        event_id UUID NOT NULL,
+        name_fr VARCHAR(255) NOT NULL,
+        name_en VARCHAR(255) NOT NULL,
+        description_fr TEXT,
+        description_en TEXT,
+        created_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
+        updated_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
+        CONSTRAINT fk_topics_event
+            FOREIGN KEY (event_id)
+            REFERENCES events(id)
+            ON DELETE CASCADE
+    );""",
+
+    """
+       CREATE TABLE IF NOT EXISTS proposals (
         id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
         event_id UUID NOT NULL,
         title VARCHAR(255) NOT NULL,
         description TEXT NOT NULL,
         abstract TEXT,
-        track_id UUID,
-        speaker_full_name VARCHAR(255) NOT NULL,
-        speaker_email VARCHAR(255) NOT NULL,
-        speaker_phone VARCHAR(40),
-        speaker_organization VARCHAR(255),
-        speaker_bio TEXT,
-        speaker_photo_url TEXT,
-        speaker_social_links JSONB,
-        session_type session_type_enum NOT NULL,
+        topic_id UUID,
+        format VARCHAR(64) NOT NULL,
+        python_percentage INTEGER CHECK (python_percentage >= 0 AND python_percentage <= 100),
+        full_name VARCHAR(255) NOT NULL,
+        email VARCHAR(255) NOT NULL,
+        phone_number VARCHAR(40),
+        organization VARCHAR(255),
+        bio TEXT,
+        country VARCHAR(64),
+        experience TEXT,
+        photo_url TEXT,
+        social_media_links JSONB,
         language VARCHAR(64) NOT NULL DEFAULT 'French',
         level VARCHAR(64),
         needs_equipment BOOLEAN NOT NULL DEFAULT FALSE,
         equipment_details TEXT,
-        format delivery_method_enum NOT NULL DEFAULT 'onsite',
+        delivery_mode delivery_method_enum NOT NULL DEFAULT 'onsite',
         status submission_status_enum NOT NULL DEFAULT 'draft',
+        agreed_to_code_of_conduct BOOLEAN NOT NULL DEFAULT FALSE,
+        agreed_to_privacy_policy BOOLEAN NOT NULL DEFAULT FALSE,
+        shared_with_sponsors BOOLEAN NOT NULL DEFAULT FALSE,
         created_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
         updated_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
         CONSTRAINT fk_proposals_event
             FOREIGN KEY (event_id)
             REFERENCES events(id)
-            ON DELETE CASCADE
+            ON DELETE CASCADE,
+        CONSTRAINT fk_proposals_topic
+            FOREIGN KEY (topic_id)
+            REFERENCES topics(id)
+            ON DELETE SET NULL
     );""",
     """
     CREATE TABLE IF NOT EXISTS speakers (
@@ -324,265 +350,36 @@ CREATE_TABLE_QUERIES = [
             ON DELETE SET NULL,
         CHECK (ends_at > starts_at)
     );""",
-
     """
-    CREATE TABLE IF NOT EXISTS registrations (
+    CREATE TABLE IF NOT EXISTS draft_proposals (
         id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
         event_id UUID NOT NULL,
-        user_id UUID,
-        full_name VARCHAR(255) NOT NULL,
         email VARCHAR(255) NOT NULL,
-        phone VARCHAR(40),
-        organization VARCHAR(255),
-        ticket_type VARCHAR(100) NOT NULL DEFAULT 'general',
-        status registration_status_enum NOT NULL DEFAULT 'pending',
-        checked_in_at TIMESTAMPTZ,
-        notes TEXT,
+        password_hash TEXT NOT NULL,
+        proposal_data JSONB NOT NULL,
         created_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
         updated_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
-        CONSTRAINT fk_registrations_event
+        CONSTRAINT fk_draft_proposals_event
             FOREIGN KEY (event_id)
             REFERENCES events(id)
-            ON DELETE CASCADE,
-        CONSTRAINT fk_registrations_user
-            FOREIGN KEY (user_id)
-            REFERENCES users(id)
-            ON DELETE SET NULL,
-        CONSTRAINT uq_registrations_event_email UNIQUE (event_id, email)
-    );
-    """,
-
-    """
-    CREATE TABLE IF NOT EXISTS sponsor_packages (
-        id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
-        event_id UUID NOT NULL,
-        name VARCHAR(255) NOT NULL,
-        tier package_tier_enum NOT NULL,
-        description TEXT,
-        price NUMERIC(10, 2) NOT NULL DEFAULT 0,
-        benefits JSONB DEFAULT '[]',
-        max_slots INT,
-        is_active BOOLEAN NOT NULL DEFAULT TRUE,
-        created_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
-        updated_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
-        CONSTRAINT fk_sponsor_packages_event
-            FOREIGN KEY (event_id)
-            REFERENCES events(id)
-            ON DELETE CASCADE,
-        CONSTRAINT uq_sponsor_packages_event_tier UNIQUE (event_id, tier)
-    );
-    """,
-
-    """
-    CREATE TABLE IF NOT EXISTS permissions (
-        id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
-        name VARCHAR(100) NOT NULL UNIQUE,
-        description TEXT,
-        resource VARCHAR(50) NOT NULL,
-        action VARCHAR(50) NOT NULL,
-        created_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
-        CONSTRAINT uq_permissions_resource_action UNIQUE (resource, action)
-    );
-    """,
-
-    """
-    CREATE TABLE IF NOT EXISTS roles (
-        id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
-        name VARCHAR(100) NOT NULL UNIQUE,
-        description TEXT,
-        is_system BOOLEAN NOT NULL DEFAULT FALSE,
-        created_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
-        updated_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
-    );
-    """,
-
-    """
-    CREATE TABLE IF NOT EXISTS role_permissions (
-        role_id UUID NOT NULL,
-        permission_id UUID NOT NULL,
-        PRIMARY KEY (role_id, permission_id),
-        CONSTRAINT fk_rp_role
-            FOREIGN KEY (role_id) REFERENCES roles(id) ON DELETE CASCADE,
-        CONSTRAINT fk_rp_permission
-            FOREIGN KEY (permission_id) REFERENCES permissions(id) ON DELETE CASCADE
-    );
-    """,
-
-    """
-    CREATE TABLE IF NOT EXISTS user_roles (
-        user_id UUID NOT NULL,
-        role_id UUID NOT NULL,
-        assigned_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
-        assigned_by UUID,
-        PRIMARY KEY (user_id, role_id),
-        CONSTRAINT fk_ur_user
-            FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE,
-        CONSTRAINT fk_ur_role
-            FOREIGN KEY (role_id) REFERENCES roles(id) ON DELETE CASCADE,
-        CONSTRAINT fk_ur_assigned_by
-            FOREIGN KEY (assigned_by) REFERENCES users(id) ON DELETE SET NULL
-    );
-    """,
-
-    """
-    CREATE TABLE IF NOT EXISTS talk_reviews (
-        id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
-        proposal_id UUID NOT NULL,
-        reviewer_id UUID NOT NULL,
-        score SMALLINT NOT NULL CHECK (score BETWEEN 1 AND 5),
-        comment TEXT,
-        created_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
-        updated_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
-        CONSTRAINT fk_tr_proposal
-            FOREIGN KEY (proposal_id) REFERENCES proposals(id) ON DELETE CASCADE,
-        CONSTRAINT fk_tr_reviewer
-            FOREIGN KEY (reviewer_id) REFERENCES users(id) ON DELETE CASCADE,
-        CONSTRAINT uq_tr_proposal_reviewer UNIQUE (proposal_id, reviewer_id)
-    );
-    """,
-
-    """
-    CREATE TABLE IF NOT EXISTS categories (
-        id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
-        name VARCHAR(255) NOT NULL,
-        slug VARCHAR(255) NOT NULL UNIQUE,
-        description TEXT,
-        parent_id UUID,
-        is_active BOOLEAN NOT NULL DEFAULT TRUE,
-        created_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
-        updated_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
-        CONSTRAINT fk_categories_parent
-            FOREIGN KEY (parent_id)
-            REFERENCES categories(id)
-            ON DELETE SET NULL
-    );
-    """,
-
-    """
-    CREATE TABLE IF NOT EXISTS products (
-        id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
-        event_id UUID NOT NULL,
-        category_id UUID,
-        name VARCHAR(255) NOT NULL,
-        slug VARCHAR(255) NOT NULL UNIQUE,
-        description TEXT,
-        image_url TEXT,
-        base_price NUMERIC(10, 2) NOT NULL DEFAULT 0,
-        is_active BOOLEAN NOT NULL DEFAULT TRUE,
-        created_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
-        updated_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
-        CONSTRAINT fk_products_event
-            FOREIGN KEY (event_id)
-            REFERENCES events(id)
-            ON DELETE CASCADE,
-        CONSTRAINT fk_products_category
-            FOREIGN KEY (category_id)
-            REFERENCES categories(id)
-            ON DELETE SET NULL
-    );
-    """,
-
-    """
-    CREATE TABLE IF NOT EXISTS product_variants (
-        id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
-        product_id UUID NOT NULL,
-        name VARCHAR(255) NOT NULL,
-        sku VARCHAR(100) NOT NULL UNIQUE,
-        price_override NUMERIC(10, 2),
-        stock_quantity INT NOT NULL DEFAULT 0,
-        attributes JSONB DEFAULT '{}',
-        is_active BOOLEAN NOT NULL DEFAULT TRUE,
-        created_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
-        updated_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
-        CONSTRAINT fk_variants_product
-            FOREIGN KEY (product_id)
-            REFERENCES products(id)
             ON DELETE CASCADE
-    );
-    """,
+    );""",
 
     """
-    CREATE TABLE IF NOT EXISTS coupons (
-        id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
-        event_id UUID,
-        code VARCHAR(50) NOT NULL UNIQUE,
-        type coupon_type_enum NOT NULL,
-        value NUMERIC(10, 2) NOT NULL,
-        max_uses INT,
-        uses_count INT NOT NULL DEFAULT 0,
-        expires_at TIMESTAMPTZ,
-        is_active BOOLEAN NOT NULL DEFAULT TRUE,
-        created_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
-        updated_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
-        CONSTRAINT fk_coupons_event
-            FOREIGN KEY (event_id)
-            REFERENCES events(id)
-            ON DELETE SET NULL
-    );
-    """,
-
-    """
-    CREATE TABLE IF NOT EXISTS shop_orders (
+    CREATE TABLE IF NOT EXISTS proposal_formats (
         id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
         event_id UUID NOT NULL,
-        user_id UUID NOT NULL,
-        coupon_id UUID,
-        status order_status_enum NOT NULL DEFAULT 'pending',
-        total_amount NUMERIC(10, 2) NOT NULL DEFAULT 0,
-        discount_amount NUMERIC(10, 2) NOT NULL DEFAULT 0,
-        shipping_address JSONB DEFAULT '{}',
+        name_fr VARCHAR(255) NOT NULL,
+        name_en VARCHAR(255) NOT NULL,
+        description_fr TEXT,
+        description_en TEXT,
         created_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
         updated_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
-        CONSTRAINT fk_orders_event
+        CONSTRAINT fk_proposal_formats_event
             FOREIGN KEY (event_id)
             REFERENCES events(id)
-            ON DELETE RESTRICT,
-        CONSTRAINT fk_orders_user
-            FOREIGN KEY (user_id)
-            REFERENCES users(id)
-            ON DELETE RESTRICT,
-        CONSTRAINT fk_orders_coupon
-            FOREIGN KEY (coupon_id)
-            REFERENCES coupons(id)
-            ON DELETE SET NULL
-    );
-    """,
-
-    """
-    CREATE TABLE IF NOT EXISTS order_items (
-        id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
-        order_id UUID NOT NULL,
-        product_variant_id UUID NOT NULL,
-        quantity INT NOT NULL DEFAULT 1,
-        unit_price NUMERIC(10, 2) NOT NULL,
-        created_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
-        CONSTRAINT fk_items_order
-            FOREIGN KEY (order_id)
-            REFERENCES shop_orders(id)
-            ON DELETE CASCADE,
-        CONSTRAINT fk_items_variant
-            FOREIGN KEY (product_variant_id)
-            REFERENCES product_variants(id)
-            ON DELETE RESTRICT
-    );
-    """,
-
-    """
-    CREATE TABLE IF NOT EXISTS shop_payments (
-        id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
-        order_id UUID NOT NULL UNIQUE,
-        amount NUMERIC(10, 2) NOT NULL,
-        status payment_status_enum NOT NULL DEFAULT 'pending',
-        method VARCHAR(100),
-        reference VARCHAR(255),
-        created_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
-        updated_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
-        CONSTRAINT fk_payments_order
-            FOREIGN KEY (order_id)
-            REFERENCES shop_orders(id)
             ON DELETE CASCADE
-    );
-    """,
+    );""",
 ]
 
 

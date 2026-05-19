@@ -18,25 +18,41 @@ Fork this repository, then clone your fork locally:
 ```bash
 git clone https://github.com/<your-username>/pythontogo_api.git
 cd pythontogo_api
+
 ```
 
-### 2) Install dependencies
+
+### 1) Run with script (Linux/MacOS)
+Make sure you have Docker installed and running on your machine.
+```bash
+# Copy the example file, then update variables
+
+cp app/.env.example app/.env
+
+# Linux/MacOS: Make the entrypoint script executable
+chmod +x entrypoint.sh
+
+# run script to start the API with Docker
+./entrypoint.sh
+```
+
+## Or Develop Locally
+
+### 2) Local Development
+
+
+## 2.1)  Install dependencies and configure environment
 
 ```bash
 pip install -r requirements.txt
+
+
+# Copy the example file, then update variables
+
+cp app/.env.example app/.env
 ```
 
-### 3) Configure environment
-
-Copy the example file, then update variables:
-
-```bash
-cp .env.example .env
-```
-
-Then edit .env with your local values (DB, keys, etc.).
-
-### 4) Run migrations
+### 2.2) Run migrations
 
 ```bash
 python -m app.database.migrations
@@ -48,7 +64,7 @@ python3 -m app.database.migrations
 
 Check migration configuration in the project's Alembic files if needed.
 
-### 5) Start the API in development
+### 2.3) Start the API in development
 
 ```bash
 fastapi dev app/main.py --port 8001

@@ -1,7 +1,7 @@
 from fastapi import HTTPException, BackgroundTasks
 from app.core.settings import logger
 
-from app.database.orm import select, insert, update, select_with_join, delete
+from app.database.orm import select, insert, update, delete
 
 
 async def add_contact(db, payload: dict, background_tasks: BackgroundTasks):

@@ -33,6 +33,7 @@ async def select_with_join(db: Connection, table, join_table, join_condition, co
         async with db.cursor(row_factory=dict_row) as cur:
             await cur.execute(query, values)
             result = await cur.fetchall()
+
         return result
     except Exception as e:
 
@@ -78,8 +79,7 @@ async def update(db: Connection, table, data, filter):
         data = remove_null_values(data)
         query, values = generate_update_query(table, data, filter)
         async with db.cursor() as cur:
-            print(values)
-            print(query.as_string(db))
+
             await cur.execute(query, values)
         await db.commit()
     except Exception as e:

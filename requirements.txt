@@ -11,4 +11,9 @@ python-slugify==8.0.1
 requests==2.32.4
 pydantic==2.12
 nanoid==2.0.0
+<<<<<<< HEAD
 cloudinary==1.42.1
+=======
+passlib[bcrypt]==1.7.4
+bcrypt==4.0.1
+>>>>>>> origin/main

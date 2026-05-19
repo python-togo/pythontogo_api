@@ -37,7 +37,7 @@ async def add_sponsor_partner(db, payload: dict, event_code: str, background_tas
             "id": str(uuid4()),
             "event_id": event[0]["id"],
         })
-        print(payload)
+
         background_tasks.add_task(
             insert, db, "sponsors_partners", payload)
         return {"message": f"Company {payload['name']} partnership/sponsorship request received successfully and is being processed"}
@@ -116,10 +116,68 @@ async def get_sponsors_partners_by_event(db, event_code: str):
                             detail=f"Error fetching sponsors/partners")
 
 
+async def get_confirmed_sponsors_partners_by_event(db, event_code: str):
+    try:
+
+        exemple_response = {
+            "name": "string",
+            "website_url": "https://example.com/",
+            "contact_name": "string",
+            "contact_email": "user@example.com",
+            "contact_phone": "string",
+            "description": "string",
+            "logo_url": "string",
+            "partner_type": "partnership",
+            "id": "3fa85f64-5717-4562-b3fc-2c963f66afa6",
+            "event_id": "3fa85f64-5717-4562-b3fc-2c963f66afa6",
+            "package_tier": "headline",
+            "is_confirmed": False,
+            "created_at": "2026-04-07T00:57:17.092Z",
+            "updated_at": "2026-04-07T00:57:17.092Z"
+        }
+        partners = await select_with_join(
+            db,
+            table="sponsors_partners",
+            join_table="events",
+            join_condition="sponsors_partners.event_id = events.id",
+            columns=["sponsors_partners.id", "sponsors_partners.name", "sponsors_partners.website_url", "sponsors_partners.contact_name", "sponsors_partners.contact_email", "sponsors_partners.contact_phone", "sponsors_partners.description",
+                     "sponsors_partners.logo_url", "sponsors_partners.partner_type", "sponsors_partners.event_id", "sponsors_partners.package_tier", "sponsors_partners.is_confirmed", "sponsors_partners.created_at", "sponsors_partners.updated_at"],
+            filter={"events.code": event_code,
+                    "sponsors_partners.is_confirmed": True},
+        )
+        if not partners:
+            logger.warning(
+                "No sponsors/partners found for event code %s", event_code)
+
+            raise HTTPException(status_code=status.HTTP_404_NOT_FOUND,
+                                detail=f"No sponsors/partners found for event code {event_code}")
+        return partners
+    except Exception as e:
+        if isinstance(e, HTTPException):
+            raise e
+        logger.error("Error fetching sponsors/partners: %s", str(e))
+        raise HTTPException(status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+                            detail=f"Error fetching sponsors/partners")
+
+
 async def get_sponsors_partners(db):
     try:
         partners = await select(db, "sponsors_partners")
-        print(partners)
+        if not partners:
+            raise HTTPException(
+                status_code=status.HTTP_404_NOT_FOUND, detail="No sponsors/partners found")
+        return partners
+    except Exception as e:
+        logger.error("Error fetching sponsors/partners: %s", str(e))
+        if isinstance(e, HTTPException):
+            raise e
+        raise HTTPException(status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+                            detail=f"Error fetching sponsors/partners")
+
+
+async def get_confirmed_sponsors_partners(db):
+    try:
+        partners = await select(db, "sponsors_partners", filter={"is_confirmed": True})
         if not partners:
             raise HTTPException(
                 status_code=status.HTTP_404_NOT_FOUND, detail="No sponsors/partners found")
