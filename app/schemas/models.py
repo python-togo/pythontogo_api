@@ -4,6 +4,7 @@ from enum import Enum
 from typing import Any
 from uuid import UUID
 
+
 from pydantic import BaseModel, Field, EmailStr, HttpUrl
 
 
@@ -718,29 +719,55 @@ class SessionUpdate(BaseModel):
         default_factory=lambda: datetime.now(timezone.utc))
 
 
-<<<<<<< HEAD
-# ── RBAC ──────────────────────────────────────────────────────────────────────
+class ProposalFormatBase(BaseModel):
+    name_fr: str
+    name_en: str
+    description_fr: str | None = None
+    description_en: str | None = None
+
+
+class ProposalFormatCreate(ProposalFormatBase):
+    pass
+
+
+class ProposalFormatUpdate(BaseModel):
+    name_fr: str | None = None
+    name_en: str | None = None
+    description_fr: str | None = None
+    description_en: str | None = None
+    updated_at: datetime = Field(
+        default_factory=lambda: datetime.now(timezone.utc))
+
+
+class ProposalFormatSummary(ProposalFormatBase):
+    id: UUID
+    event_id: UUID
+    created_at: datetime
+    updated_at: datetime
+
 
 class PermissionSummary(BaseModel):
     id: UUID
-    name: str
-    description: str | None
     resource: str
     action: str
-    created_at: datetime
+    description: str | None = None
+
+    model_config = {"from_attributes": True}
 
 
 class RoleSummary(BaseModel):
     id: UUID
     name: str
-    description: str | None
-    is_system: bool
+    description: str | None = None
+    is_system: bool = False
     created_at: datetime
     updated_at: datetime
 
+    model_config = {"from_attributes": True}
+
 
 class RoleDetail(RoleSummary):
-    permissions: list[PermissionSummary] = Field(default_factory=list)
+    permissions: list[PermissionSummary] = []
 
 
 class RoleCreate(BaseModel):
@@ -767,62 +794,13 @@ class UserRoleAssignment(BaseModel):
     role_name: str
     assigned_at: datetime
 
+    model_config = {"from_attributes": True}
 
-# ── CFP Review ────────────────────────────────────────────────────────────────
 
 class TalkReviewCreate(BaseModel):
-    score: int = Field(..., ge=1, le=5, description="Rating from 1 (poor) to 5 (excellent)")
-    comment: str | None = None
-
-
-class TalkReviewSummary(BaseModel):
-    id: UUID
-    proposal_id: UUID
-    reviewer_id: UUID
     score: int
-    comment: str | None
-    created_at: datetime
-    updated_at: datetime
-
-
-class TalkReviewMasked(BaseModel):
-    """Returned to reviewers who have not yet voted — hides individual scores."""
-    proposal_id: UUID
-    has_reviewed: bool
-    total_reviews: int
+    comment: str | None = None
 
 
 class TalkStatusUpdate(BaseModel):
     status: SubmissionStatus
-
-
-class ProposalWithScore(ProposalSummary):
-    avg_score: float | None = None
-    review_count: int = 0
-=======
-class ProposalFormatBase(BaseModel):
-    name_fr: str
-    name_en: str
-    description_fr: str | None = None
-    description_en: str | None = None
-
-
-class ProposalFormatCreate(ProposalFormatBase):
-    pass
-
-
-class ProposalFormatUpdate(BaseModel):
-    name_fr: str | None = None
-    name_en: str | None = None
-    description_fr: str | None = None
-    description_en: str | None = None
-    updated_at: datetime = Field(
-        default_factory=lambda: datetime.now(timezone.utc))
-
-
-class ProposalFormatSummary(ProposalFormatBase):
-    id: UUID
-    event_id: UUID
-    created_at: datetime
-    updated_at: datetime
->>>>>>> origin/main

@@ -1,13 +1,9 @@
-<<<<<<< HEAD
-from fastapi import APIRouter, BackgroundTasks, Depends, HTTPException, Query, status
-=======
-from fastapi import APIRouter, BackgroundTasks, Depends, status, HTTPException
+from fastapi import APIRouter, BackgroundTasks, Depends, status, HTTPException, Query
 from app.utils.sponsor_partner import (add_sponsor_partner, get_confirmed_sponsors_partners, get_confirmed_sponsors_partners_by_event, get_sponsors_partners_by_event,
                                        get_sponsors_partners, _update_partner_sponsor, delete_sponsor_partner)
->>>>>>> origin/main
 
 from app.utils.sponsor_partner import add_sponsor_partner, _update_partner_sponsor, delete_sponsor_partner
-from app.schemas.models import PartnerSponsorUpdate, PartnershipSponsorshipInquiry
+from app.schemas.models import PartnerSponsorUpdate, PartnershipSponsorshipInquiry, PartnerSponsorSummary
 from app.database.connection import get_db_connection
 from app.core.settings import logger
 from app.utils.responses import success
@@ -56,15 +52,6 @@ async def get_all_partners_sponsors(
         raise HTTPException(status_code=500, detail="Error retrieving partners/sponsors")
 
 
-<<<<<<< HEAD
-@api_router.get("/all/{event_code}")
-async def get_partners_sponsors(
-    event_code: str,
-    page: int = Query(default=1, ge=1),
-    per_page: int = Query(default=20, ge=1, le=100),
-    db=Depends(get_db_connection),
-):
-=======
 @api_router.get("/confirmed/all", response_model=list[PartnerSponsorSummary])
 async def get_confirmed_partners_sponsors(db=Depends(get_db_connection)):
     try:
@@ -84,7 +71,6 @@ async def get_confirmed_partners_sponsors(db=Depends(get_db_connection)):
 
 @api_router.get("/all/{event_code}", response_model=list[PartnerSponsorSummary])
 async def get_partners_sponsors(event_code: str, db=Depends(get_db_connection)):
->>>>>>> origin/main
     try:
         code = event_code.strip().upper()
         rows, total = await paginate(

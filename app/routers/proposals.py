@@ -1,13 +1,6 @@
 from fastapi import APIRouter, BackgroundTasks, Depends, HTTPException, Query, status
 
 from app.database.connection import get_db_connection
-<<<<<<< HEAD
-from app.utils.proposals import add_proposal, get_proposal_by_id, update_proposal, delete_proposal
-from app.schemas.models import ProposalCreate, ProposalUpdate
-from app.core.settings import logger
-from app.utils.responses import success
-from app.utils.pagination import paginate
-=======
 from app.utils.proposals import (add_proposal, get_proposals_by_event,
                                  get_proposal_by_id, get_all_proposals, update_proposal, delete_proposal, save_draft, resume_draft)
 from app.schemas.models import (
@@ -23,14 +16,10 @@ from app.schemas.models import (
 from app.core.settings import logger
 from app.utils.helpers import verify_password, hash_password
 
->>>>>>> origin/main
 
 api_router = APIRouter(prefix="/proposals", tags=["proposals"])
 
 
-<<<<<<< HEAD
-@api_router.post("/create/{event_code}", status_code=status.HTTP_201_CREATED)
-=======
 @api_router.post("/save-draft/{event_code}", response_model=MessageResponse, status_code=status.HTTP_201_CREATED)
 async def save_proposal_draft(draftProposal: ProposalDraft, event_code: str, background_tasks: BackgroundTasks, db=Depends(get_db_connection)):
     """Save a proposal draft for an event.
@@ -61,7 +50,6 @@ async def resume_proposal_draft(resumeDraft: ResumeDraft, event_code: str, db=De
 
 
 @api_router.post("/create/{event_code}", response_model=MessageResponse, status_code=status.HTTP_201_CREATED)
->>>>>>> origin/main
 async def create_proposal(proposal: ProposalCreate, event_code: str, background_tasks: BackgroundTasks, db=Depends(get_db_connection)):
     try:
         result = await add_proposal(db, proposal, event_code.strip().upper(), background_tasks=background_tasks)
