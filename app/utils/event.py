@@ -61,6 +61,20 @@ async def get_event_by_code(db, event_code: str):
         raise HTTPException(status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
                             detail="Error retrieving event")
 
+async def get_event_by_id(db, event_id: str):
+    try:
+        event = await select(db, "events", filter={"id": event_id})
+        if not event:
+            raise HTTPException(status_code=status.HTTP_404_NOT_FOUND,
+                                detail=f"Event with id {event_id} not found")
+        return event[0]
+    except Exception as e:
+        # TODO sending email to admin about error during processing the request can be done here
+        logger.error(f"Error retrieving event: {str(e)}")
+        if isinstance(e, HTTPException):
+            raise e
+        raise HTTPException(status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+                            detail="Error retrieving event")
 
 async def get_events(db):
     try:
@@ -79,16 +93,15 @@ async def get_events(db):
                             detail="Error retrieving events")
 
 
-async def update_event(db, event_code: str, payload: dict, background_tasks: BackgroundTasks):
+async def update_event(db, event_id: str, payload: dict, background_tasks: BackgroundTasks):
     try:
-        event_code = event_code.strip().upper()
-        existing = await select(db, "events", filter={"code": event_code})
+        existing = await select(db, "events", filter={"id": event_id})
         if not existing:
             raise HTTPException(status_code=status.HTTP_404_NOT_FOUND,
-                                detail=f"Event with code {event_code} not found")
+                                detail=f"Event with id {event_id} not found")
         payload = remove_null_values(payload)
         background_tasks.add_task(
-            update, db, "events", payload, filter={"code": event_code})
+            update, db, "events", payload, filter={"id": event_id})
         return {"message": "Event updated successfully"}
     except Exception as e:
         logger.error(f"Error updating event: {str(e)}")

@@ -15,18 +15,19 @@ from app.schemas.models import (
 )
 from app.core.settings import logger
 from app.utils.helpers import verify_password, hash_password
+from app.utils.responses import success
+from app.utils.pagination import paginate
 
 
 api_router = APIRouter(prefix="/proposals", tags=["proposals"])
 
 
-@api_router.post("/save-draft/{event_code}", response_model=MessageResponse, status_code=status.HTTP_201_CREATED)
-async def save_proposal_draft(draftProposal: ProposalDraft, event_code: str, background_tasks: BackgroundTasks, db=Depends(get_db_connection)):
+@api_router.post("/save-draft/{event_id}", response_model=MessageResponse, status_code=status.HTTP_201_CREATED)
+async def save_proposal_draft(draftProposal: ProposalDraft, event_id: str, background_tasks: BackgroundTasks, db=Depends(get_db_connection)):
     """Save a proposal draft for an event.
     """
     try:
-        event_code = event_code.strip().upper()
-        result = await save_draft(db, draftProposal, event_code, background_tasks)
+        result = await save_draft(db, draftProposal, event_id, background_tasks)
         return result
     except Exception as e:
         logger.error(f"Error saving proposal draft: {str(e)}")
@@ -35,12 +36,12 @@ async def save_proposal_draft(draftProposal: ProposalDraft, event_code: str, bac
         raise HTTPException(status_code=500, detail="Internal server error")
 
 
-@api_router.post("/resume-draft/{event_code}", response_model=ResumeDraftResponse)
-async def resume_proposal_draft(resumeDraft: ResumeDraft, event_code: str, db=Depends(get_db_connection)):
-    """Resume a saved proposal draft by providing email, password, and event code.
+@api_router.post("/resume-draft/{event_id}", response_model=ResumeDraftResponse)
+async def resume_proposal_draft(resumeDraft: ResumeDraft, event_id: str, db=Depends(get_db_connection)):
+    """Resume a saved proposal draft by providing email, password, and event id.
     """
     try:
-        result = await resume_draft(db, resumeDraft, event_code)
+        result = await resume_draft(db, resumeDraft, event_id)
         return result
     except Exception as e:
         logger.error(f"Error resuming proposal draft: {str(e)}")
@@ -49,10 +50,10 @@ async def resume_proposal_draft(resumeDraft: ResumeDraft, event_code: str, db=De
         raise HTTPException(status_code=500, detail="Internal server error")
 
 
-@api_router.post("/create/{event_code}", response_model=MessageResponse, status_code=status.HTTP_201_CREATED)
-async def create_proposal(proposal: ProposalCreate, event_code: str, background_tasks: BackgroundTasks, db=Depends(get_db_connection)):
+@api_router.post("/create/{event_id}", response_model=MessageResponse, status_code=status.HTTP_201_CREATED)
+async def create_proposal(proposal: ProposalCreate, event_id: str, background_tasks: BackgroundTasks, db=Depends(get_db_connection)):
     try:
-        result = await add_proposal(db, proposal, event_code.strip().upper(), background_tasks=background_tasks)
+        result = await add_proposal(db, proposal, event_id, background_tasks=background_tasks)
         return success(result, code=201)
     except HTTPException:
         raise
@@ -60,9 +61,9 @@ async def create_proposal(proposal: ProposalCreate, event_code: str, background_
         raise HTTPException(status_code=500, detail="Internal server error")
 
 
-@api_router.get("/list/{event_code}")
+@api_router.get("/list/{event_id}")
 async def list_proposals(
-    event_code: str,
+    event_id: str,
     page: int = Query(default=1, ge=1),
     per_page: int = Query(default=20, ge=1, le=100),
     db=Depends(get_db_connection),
@@ -74,10 +75,10 @@ async def list_proposals(
             SELECT p.*
             FROM proposals p
             JOIN events e ON p.event_id = e.id
-            WHERE e.code = %s
+            WHERE e.id = %s
             ORDER BY p.created_at DESC
             """,
-            (event_code.strip().upper(),),
+            (event_id,),
             page, per_page,
         )
         if not rows and page == 1:

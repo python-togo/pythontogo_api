@@ -149,16 +149,15 @@ async def delete_proposal(db, proposal_id: str, background_tasks: BackgroundTask
         raise HTTPException(status_code=500, detail="Internal server error")
 
 
-async def save_draft(db, draft: ProposalDraft, event_code: str, background_tasks: BackgroundTasks):
+async def save_draft(db, draft: ProposalDraft, event_id: str, background_tasks: BackgroundTasks):
     """
     Save a proposal draft to the database.
     """
     try:
-        event_code = event_code.strip().upper()
         draft_data = draft.model_dump(mode="json")
         hashed_password = hash_password(draft_data["password_hash"])
         draft_data["password_hash"] = hashed_password
-        event_data = await select(db, "events", filter={"code": event_code})
+        event_data = await select(db, "events", filter={"id": event_id})
         if not event_data:
             raise HTTPException(status_code=404, detail="Event not found")
         event_id = event_data[0]["id"]
@@ -182,20 +181,17 @@ async def save_draft(db, draft: ProposalDraft, event_code: str, background_tasks
         raise HTTPException(status_code=500, detail="Internal server error")
 
 
-async def resume_draft(db, resumeDraft: ResumeDraft, event_code: str):
+async def resume_draft(db, resumeDraft: ResumeDraft, event_id: str):
     """
     Resume a proposal draft from the database.
     """
     try:
         # TODO: Check cfp deadline for the event and reject resume if the deadline has passed can be done here
-        event_code = event_code.strip().upper()
-
         email = resumeDraft.email
         password = resumeDraft.password
-        event_data = await select(db, "events", filter={"code": event_code})
+        event_data = await select(db, "events", filter={"id": event_id})
         if not event_data:
             raise HTTPException(status_code=404, detail="Event not found")
-        event_id = event_data[0]["id"]
         existing_draft = await select(db, "draft_proposals", filter={"email": email, "event_id": event_id})
         if not existing_draft:
             raise HTTPException(

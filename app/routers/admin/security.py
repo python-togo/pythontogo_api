@@ -1,4 +1,4 @@
-from fastapi import APIRouter, Depends
+from fastapi import APIRouter, Depends, HTTPException
 from psycopg.rows import dict_row
 
 from app.core.security import require_admin, decode_token, generate_api_key
@@ -112,3 +112,51 @@ async def list_active_sessions(
                 pass
         sessions.append(ActiveSession(user_id=user_id, email=email, expires_in_seconds=ttl))
     return success(sessions)
+
+@api_router.get("/api-keys/{key_id}")
+async def get_api_key_details(
+    key_id: str,
+    db=Depends(get_db_connection),
+    redis=Depends(get_redis_client),
+    _=Depends(require_admin),
+):
+    async with db.cursor(row_factory=dict_row) as cur:
+        await cur.execute(
+            """
+            SELECT k.id, k.name, k.key_value, k.event_id, k.created_at,
+                   e.code AS event_code
+            FROM api_keys k
+            LEFT JOIN events e ON e.id = k.event_id
+            WHERE k.id = %s
+            """,
+            (key_id,),
+        )
+        row = await cur.fetchone()
+        if not row:
+            raise HTTPException(status_code=404, detail="API key not found")
+        cached = await redis.exists(f"PYTOGO_API_KEY:{row['key_value']}")
+        result = APIKeySummaryAdmin(
+            id=row["id"],
+            name=row["name"],
+            key_masked=_mask_key(row["key_value"]),
+            event_id=row["event_id"],
+            event_code=row["event_code"],
+            created_at=row["created_at"],
+            is_cached=bool(cached),
+        )
+    return success(result)
+
+@api_router.delete("/api-keys/{key_id}")
+async def delete_api_key(
+    key_id: str,
+    db=Depends(get_db_connection),
+    redis=Depends(get_redis_client),
+    _=Depends(require_admin),
+):
+    async with db.cursor() as cur:
+        await cur.execute("DELETE FROM api_keys WHERE id = %s", (key_id,))
+        if cur.rowcount == 0:
+            raise HTTPException(status_code=404, detail="API key not found")
+    # Remove from Redis cache if exists
+    await redis.delete(f"PYTOGO_API_KEY:{key_id}")
+    return success({"message": "API key deleted successfully"})

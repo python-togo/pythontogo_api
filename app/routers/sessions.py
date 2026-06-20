@@ -2,7 +2,7 @@ from uuid import UUID
 
 from fastapi import APIRouter, Depends, Query, status
 
-from app.core.security import require_admin
+from app.core.security import require_permission
 from app.database.connection import get_db_connection
 from app.schemas.models import SessionCreate, SessionSummary, SessionUpdate
 from app.utils.sessions import (
@@ -14,6 +14,7 @@ from app.utils.sessions import (
 )
 from app.utils.responses import success
 from app.utils.pagination import paginate
+from app.core.security import require_admin
 
 router = APIRouter(prefix="/sessions", tags=["admin-sessions"])
 
