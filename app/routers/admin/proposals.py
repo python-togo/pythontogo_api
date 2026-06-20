@@ -22,10 +22,10 @@ async def get_proposals_overview(
         await cur.execute("SELECT status, COUNT(*) AS cnt FROM proposals GROUP BY status")
         by_status = {r["status"]: r["cnt"] for r in await cur.fetchall()}
 
-        await cur.execute("SELECT session_type, COUNT(*) AS cnt FROM proposals GROUP BY session_type")
-        by_session_type = {r["session_type"]: r["cnt"] for r in await cur.fetchall()}
+        await cur.execute("SELECT format, COUNT(*) AS cnt FROM proposals GROUP BY format")
+        by_session_type = {r["format"]: r["cnt"] for r in await cur.fetchall()}
 
-        await cur.execute("SELECT COUNT(*) AS total FROM proposals WHERE track_id IS NULL")
+        await cur.execute("SELECT COUNT(*) AS total FROM proposals WHERE topic_id IS NULL")
         without_track = (await cur.fetchone())["total"]
 
     data = ProposalsDashboardOverview(
@@ -63,7 +63,7 @@ async def list_proposals_without_track(
 ):
     rows, total = await paginate(
         db,
-        "SELECT * FROM proposals WHERE track_id IS NULL ORDER BY created_at ASC",
+        "SELECT * FROM proposals WHERE topic_id IS NULL ORDER BY created_at ASC",
         (),
         page, per_page,
     )

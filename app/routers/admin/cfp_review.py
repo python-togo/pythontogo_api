@@ -23,7 +23,7 @@ async def _get_proposal_or_404(db, proposal_id: str) -> dict:
     async with db.cursor() as cur:
         await cur.execute(
             """
-            SELECT p.id, p.title, p.status, p.speaker_full_name, p.speaker_email,
+            SELECT p.id, p.title, p.status, p.full_name AS speaker_full_name, p.email AS speaker_email,
                    e.title AS event_title
             FROM proposals p
             JOIN events e ON e.id = p.event_id
