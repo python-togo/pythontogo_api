@@ -60,18 +60,22 @@ async def select_with_multiple_joins(db: Connection, table, joins, columns=None,
 
 async def insert(db: Connection, table, data):
     try:
+        print(f"[insert] table={table}, keys={list(data.keys())}")
         exit = await select(db, table, filter=data)
+        print(f"[insert] duplicate check result: {exit}")
         if exit:
             raise ValueError("Record already exists")
 
         query, values = generate_insert_query(table, data)
+        print(f"[insert] executing query: {query}")
         async with db.cursor() as cur:
             await cur.execute(query, values)
         await db.commit()
+        print(f"[insert] commit done")
     except Exception as e:
-
         logger.error(f"Error inserting record into {table}: {str(e)}")
-        # TODO: sent email to admin about error during insert query execution
+        print(f"[insert] ERROR: {str(e)}")
+        raise
 
 
 async def update(db: Connection, table, data, filter):

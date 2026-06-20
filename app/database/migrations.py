@@ -380,6 +380,26 @@ CREATE_TABLE_QUERIES = [
             REFERENCES events(id)
             ON DELETE CASCADE
     );""",
+    """
+    CREATE TABLE IF NOT EXISTS talk_reviews (
+        id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+        proposal_id UUID NOT NULL,
+        reviewer_id UUID NOT NULL,
+        score INTEGER NOT NULL CHECK (score >= 1 AND score <= 5),
+        comment TEXT,
+        created_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
+        updated_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
+        CONSTRAINT fk_tr_proposal
+            FOREIGN KEY (proposal_id)
+            REFERENCES proposals(id)
+            ON DELETE CASCADE,
+        CONSTRAINT fk_tr_reviewer
+            FOREIGN KEY (reviewer_id)
+            REFERENCES users(id)
+            ON DELETE CASCADE,
+        CONSTRAINT uq_tr_proposal_reviewer
+            UNIQUE (proposal_id, reviewer_id)
+    );""",
 ]
 
 

@@ -63,30 +63,28 @@ async def get_proposal_by_id(db, proposal_id):
         raise HTTPException(status_code=500, detail="Internal server error")
 
 
-async def add_proposal(db, proposal: ProposalCreate, event_code: str, background_tasks: BackgroundTasks):
+async def add_proposal(db, proposal: ProposalCreate, event_id: str, background_tasks: BackgroundTasks):
     """
     Add a new proposal to the database.
     """
     try:
-        event_code = event_code.strip().upper()
         proposal_data = proposal.model_dump(mode="json")
+        print(f"[add_proposal] proposal_data keys: {list(proposal_data.keys())}")
         if not proposal_data.get("agreed_to_code_of_conduct") or not proposal_data.get("agreed_to_privacy_policy"):
             raise HTTPException(
                 status_code=400, detail="You must agree to the code of conduct and privacy policy to submit a proposal")
         if not proposal_data.get("shared_with_sponsors"):
             proposal_data["shared_with_sponsors"] = False
-        # TODO : Check cfp deadline for the event and reject proposal if the deadline has passed can be done here
-        event_data = await select(db, "events", filter={"code": event_code})
+        event_data = await select(db, "events", filter={"id": event_id})
+        print(f"[add_proposal] event_data: {event_data}")
         if not event_data:
-            # background task to send email to admin about missing event can be added here
-            # TODO: Log the error can be done here
             raise HTTPException(status_code=404, detail="Event not found")
         event_id = event_data[0]["id"]
+        print(f"[add_proposal] event_id resolved: {event_id} (type: {type(event_id)})")
         existing_proposal = await select(db, "proposals", filter={
             "title": proposal_data["title"], "full_name": proposal_data["full_name"], "email": proposal_data["email"], "event_id": event_id})
+        print(f"[add_proposal] existing_proposal: {existing_proposal}")
         if existing_proposal:
-            # background task to send email to admin about duplicate proposal can be added here
-            # TODO: Log the error can be done here
             raise HTTPException(
                 status_code=400, detail="Proposal with this title already exists for the specified event")
         proposal_data.update(
@@ -96,9 +94,9 @@ async def add_proposal(db, proposal: ProposalCreate, event_code: str, background
                 "status": SubmissionStatus.SUBMITTED.value
             }
         )
-        background_tasks.add_task(insert, db, "proposals", proposal_data)
-        # TODO: send email to speaker about successful submission can be done here
-
+        print(f"[add_proposal] final proposal_data before insert: {proposal_data}")
+        await insert(db, "proposals", proposal_data)
+        print("[add_proposal] insert done")
         return {"message": "Proposal created successfully"}
     except Exception as e:
         # TODO: send email to admin about error during processing the request can be done here
