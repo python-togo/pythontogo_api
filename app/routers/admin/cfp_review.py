@@ -64,8 +64,8 @@ async def list_talks_with_scores(
             db,
             """
             SELECT
-                p.id, p.title, p.status, p.session_type, p.language,
-                p.speaker_full_name, p.speaker_email, p.created_at,
+                p.id, p.title, p.status, p.format, p.language,
+                p.full_name AS speaker_full_name, p.email AS speaker_email, p.created_at,
                 e.code AS event_code, e.title AS event_title,
                 COALESCE(s.avg_score, NULL)::float AS avg_score,
                 COALESCE(s.review_count, 0)::int  AS review_count
@@ -77,13 +77,7 @@ async def list_talks_with_scores(
             (),
             page, per_page,
         )
-        cols = [
-            "id", "title", "status", "session_type", "language",
-            "speaker_full_name", "speaker_email", "created_at",
-            "event_code", "event_title", "avg_score", "review_count",
-        ]
-        talks = [dict(zip(cols, row)) for row in rows]
-        return success(talks, total=total, page=page, per_page=per_page)
+        return success(rows, total=total, page=page, per_page=per_page)
     except HTTPException:
         raise
     except Exception as e:
