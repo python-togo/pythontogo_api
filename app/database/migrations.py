@@ -400,6 +400,62 @@ CREATE_TABLE_QUERIES = [
         CONSTRAINT uq_tr_proposal_reviewer
             UNIQUE (proposal_id, reviewer_id)
     );""",
+
+    """
+    CREATE TABLE IF NOT EXISTS permissions (
+        id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+        name VARCHAR(100) NOT NULL UNIQUE,
+        description TEXT,
+        resource VARCHAR(100) NOT NULL,
+        action VARCHAR(50) NOT NULL,
+        CONSTRAINT uq_permissions_resource_action UNIQUE (resource, action)
+    );""",
+
+    """
+    CREATE TABLE IF NOT EXISTS roles (
+        id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+        name VARCHAR(100) NOT NULL UNIQUE,
+        description TEXT,
+        is_system BOOLEAN NOT NULL DEFAULT FALSE,
+        created_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
+        updated_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
+    );""",
+
+    """
+    CREATE TABLE IF NOT EXISTS role_permissions (
+        role_id UUID NOT NULL,
+        permission_id UUID NOT NULL,
+        PRIMARY KEY (role_id, permission_id),
+        CONSTRAINT fk_rp_role
+            FOREIGN KEY (role_id)
+            REFERENCES roles(id)
+            ON DELETE CASCADE,
+        CONSTRAINT fk_rp_permission
+            FOREIGN KEY (permission_id)
+            REFERENCES permissions(id)
+            ON DELETE CASCADE
+    );""",
+
+    """
+    CREATE TABLE IF NOT EXISTS user_roles (
+        user_id UUID NOT NULL,
+        role_id UUID NOT NULL,
+        assigned_by UUID,
+        assigned_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
+        PRIMARY KEY (user_id, role_id),
+        CONSTRAINT fk_ur_user
+            FOREIGN KEY (user_id)
+            REFERENCES users(id)
+            ON DELETE CASCADE,
+        CONSTRAINT fk_ur_role
+            FOREIGN KEY (role_id)
+            REFERENCES roles(id)
+            ON DELETE CASCADE,
+        CONSTRAINT fk_ur_assigned_by
+            FOREIGN KEY (assigned_by)
+            REFERENCES users(id)
+            ON DELETE SET NULL
+    );""",
 ]
 
 
