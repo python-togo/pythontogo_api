@@ -15,9 +15,14 @@ fi
 # 2. Attente de la base de données
 # Il est crucial d'attendre que le port 5432 soit ouvert avant de migrer
 echo "Attente de la base de données..."
-# Si tu n'as pas 'nc' (netcat) installé, tu peux utiliser un simple sleep
-# ou installer 'netcat-openbsd' dans ton Dockerfile
-sleep 5 
+for i in {1..30}; do
+    if python -c "import psycopg; psycopg.connect('postgresql://postgres:supabase@db:5432/postgres')" >/dev/null 2>&1; then
+        echo "Base de données prête."
+        break
+    fi
+    echo "Tentative $i/30 : base non prête, attente 1s..."
+    sleep 1
+done 
 
 # 3. Exécution des migrations
 echo "Exécution des migrations..."

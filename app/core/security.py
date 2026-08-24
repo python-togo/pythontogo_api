@@ -20,18 +20,14 @@ def generate_api_key():
 
 
 async def verify_api_key(request: Request, db=Depends(get_db_connection), redis=Depends(get_redis_client)):
+    api_key_value = request.headers.get("X-API-Key")
 
-    api_key_value = None
-
-    if api_key_value is None:
+    if not api_key_value:
         auth_header = request.headers.get("Authorization", "")
         if auth_header.startswith("Bearer "):
             api_key_value = auth_header[7:]
 
-    if api_key_value is None:
-        api_key_value = request.headers.get("X-API-Key")
-
-    if not api_key_value or not api_key_value.startswith("PYTOGO_SK_") or len(api_key_value) != 50:
+    if not api_key_value or not isinstance(api_key_value, str) or not api_key_value.startswith("PYTOGO_SK_") or len(api_key_value) != 50:
         raise HTTPException(
             status_code=status.HTTP_401_UNAUTHORIZED, detail="Invalid API key format")
     expected_api_key = await redis.get(f"PYTOGO_API_KEY:{api_key_value}")

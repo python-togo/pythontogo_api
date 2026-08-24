@@ -592,28 +592,41 @@ ALTER_TABLE_QUERIES = [
 
 def create_tables():
     """Return SQL queries in execution order for creating the schema."""
-    conn = connect(settings.db_url)
-    with conn.cursor() as cur:
-        cur.execute(CREATE_EXTENSIONS_QUERY)
-        cur.execute(CREATE_TYPES_QUERY)
-        for query in CREATE_TABLE_QUERIES:
-            cur.execute(query)
-        for query in ALTER_TABLE_QUERIES:
-            cur.execute(query)
-        for query in CREATE_INDEX_QUERIES:
-            cur.execute(query)
-    conn.commit()
-    return (
-        CREATE_EXTENSIONS_QUERY
-        + "\n"
-        + CREATE_TYPES_QUERY
-        + "\n"
-        + "\n".join(CREATE_TABLE_QUERIES)
-        + "\n"
-        + "\n".join(ALTER_TABLE_QUERIES)
-        + "\n"
-        + "\n".join(CREATE_INDEX_QUERIES)
-    )
+    import time
+    max_retries = 10
+    retry_delay = 2
+    last_error = None
+    for attempt in range(1, max_retries + 1):
+        try:
+            conn = connect(settings.db_url)
+            with conn.cursor() as cur:
+                cur.execute(CREATE_EXTENSIONS_QUERY)
+                cur.execute(CREATE_TYPES_QUERY)
+                for query in CREATE_TABLE_QUERIES:
+                    cur.execute(query)
+                for query in ALTER_TABLE_QUERIES:
+                    cur.execute(query)
+                for query in CREATE_INDEX_QUERIES:
+                    cur.execute(query)
+            conn.commit()
+            return (
+                CREATE_EXTENSIONS_QUERY
+                + "\n"
+                + CREATE_TYPES_QUERY
+                + "\n"
+                + "\n".join(CREATE_TABLE_QUERIES)
+                + "\n"
+                + "\n".join(ALTER_TABLE_QUERIES)
+                + "\n"
+                + "\n".join(CREATE_INDEX_QUERIES)
+            )
+        except Exception as exc:
+            last_error = exc
+            if attempt < max_retries:
+                print(f"Tentative {attempt}/{max_retries} : base non prête, attente {retry_delay}s...")
+                time.sleep(retry_delay)
+            else:
+                raise last_error
 
 
 def run_migrations():
