@@ -11,6 +11,38 @@ from app.utils.vauchers import update_voucher, calculate_discounted_price
 from datetime import datetime, timezone
 
 
+async def get_all_registrations(db, event_id: UUID | None = None):
+    try:
+        filter_data = {}
+        if event_id:
+            filter_data["event_id"] = str(event_id)
+        registrations = await select_with_join(
+            db,
+            table="registrations",
+            join_table="tickets",
+            join_condition="registrations.ticket_id = tickets.id",
+            filter=filter_data,
+            columns=[
+                "registrations.id",
+                "registrations.full_name",
+                "registrations.email",
+                "registrations.ticket_type",
+                "registrations.ticket_quantity",
+                "registrations.attendance_status",
+                "registrations.payment_status",
+                "registrations.payment_reference",
+                "registrations.created_at",
+                "registrations.updated_at",
+                "registrations.event_id",
+                "tickets.name",
+            ],
+        )
+        return registrations
+    except Exception as e:
+        logger.error(f"Error retrieving registrations: {str(e)}")
+        raise HTTPException(status_code=500, detail="Error retrieving registrations")
+
+
 def validate_registration_data(registration: RegistrationCreate, reg_existing, ticket):
     """
     Validate the registration data.

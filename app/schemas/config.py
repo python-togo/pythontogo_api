@@ -25,6 +25,7 @@ class Config(BaseModel):
     smtp_port: int = 587
     smtp_user: str = "user"
     smtp_password: str = "password"
+    admin_api_key: str = ""
     admin_smtp_server: str | None = None
     admin_smtp_port: int | None = None
     admin_smtp_user: str | None = None

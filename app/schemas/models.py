@@ -122,6 +122,51 @@ class ContactMessageUpdate(BaseModel):
         default_factory=lambda: datetime.now(timezone.utc))
 
 
+class FeedbackBase(BaseModel):
+    sex: str | None = None
+    age: str | None = None
+    profession: str | None = None
+    country: str | None = None
+    python_level: str | None = None
+    heard: str | None = None
+    rating: int | None = Field(default=None, ge=1, le=5)
+    overall: str | None = None
+    favorite: str | None = None
+    improvements: str | None = None
+    comments: str | None = None
+    days: List[str] = Field(default_factory=list)
+
+
+class FeedbackSummary(FeedbackBase):
+    id: UUID
+    is_resolved: bool = False
+    created_at: datetime
+    updated_at: datetime
+
+
+class FeedbacksList(BaseModel):
+    feedbacks: list[FeedbackSummary] = Field(
+        default_factory=list)
+
+
+class FeedbackUpdate(BaseModel):
+    sex: str | None = None
+    age: str | None = None
+    profession: str | None = None
+    country: str | None = None
+    python_level: str | None = None
+    heard: str | None = None
+    rating: int | None = Field(default=None, ge=1, le=5)
+    overall: str | None = None
+    favorite: str | None = None
+    improvements: str | None = None
+    comments: str | None = None
+    days: List[str] | None = None
+    is_resolved: bool | None = None
+    updated_at: datetime = Field(
+        default_factory=lambda: datetime.now(timezone.utc))
+
+
 class APIKeyResponse(BaseModel):
     api_key: str
 
@@ -531,6 +576,7 @@ class RegistrationCreate(RegistrationBase):
 
 class RegistrationSummary(RegistrationBase):
     id: UUID
+    event_id: UUID
     created_at: datetime
     updated_at: datetime
 
