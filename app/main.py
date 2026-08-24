@@ -6,6 +6,7 @@ from psycopg_pool import AsyncConnectionPool
 import redis.asyncio as redis
 from app.core.settings import settings
 from app.routers.api import api_routers
+from app.routers.auth import api_router as auth_router
 from app.routers.notifications import api_router as notifications_router
 from app.webhooks.payments_callback import api_router as payments_callback_router
 from app.routers.feedback_public import api_router as feedback_public_router
@@ -148,6 +149,7 @@ async def favicon():
     return FileResponse(BASE_DIR / "static" / "favicon.ico")
 
 
+app.include_router(auth_router, prefix="/api/v2")
 app.include_router(api_routers)
 app.include_router(payments_callback_router)
 app.include_router(notifications_router)

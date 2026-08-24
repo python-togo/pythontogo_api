@@ -21,7 +21,7 @@ from app.utils.registrations import (
     get_all_registrations,
 )
 from app.payments.paydunya_service import create_invoice
-from app.core.security import require_admin_secret
+from app.core.auth import get_current_superuser
 from app.database.orm import select as db_select
 
 
@@ -150,7 +150,7 @@ async def _approve_student_registration(registration_id: AttendeeID, db=Depends(
         raise HTTPException(status_code=500, detail="Internal server error")
 
 
-@api_router.get("/registrations", dependencies=[Depends(require_admin_secret)])
+@api_router.get("/registrations", dependencies=[Depends(get_current_superuser)])
 async def _list_registrations(request: Request, event_id: UUID | None = None, db=Depends(get_db_connection)):
     try:
         registrations = await get_all_registrations(db, event_id=event_id)

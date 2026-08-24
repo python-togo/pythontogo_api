@@ -535,12 +535,36 @@ CREATE_TABLE_QUERIES = [
         favorite TEXT,
         improvements TEXT,
         comments TEXT,
-        is_resolved BOOLEAN NOT NULL DEFAULT FALSE,
-        created_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
-        updated_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
-    );""",
+         is_resolved BOOLEAN NOT NULL DEFAULT FALSE,
+         created_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
+         updated_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
+     );""",
+     """
+     CREATE TABLE IF NOT EXISTS users (
+         id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+         email VARCHAR(255) NOT NULL UNIQUE,
+         full_name VARCHAR(255) NOT NULL,
+         hashed_password TEXT NOT NULL,
+         is_active BOOLEAN NOT NULL DEFAULT TRUE,
+         is_superuser BOOLEAN NOT NULL DEFAULT FALSE,
+         created_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
+         updated_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
+     );""",
+     """
+     CREATE TABLE IF NOT EXISTS refresh_tokens (
+         id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+         user_id UUID NOT NULL,
+         token TEXT NOT NULL UNIQUE,
+         expires_at TIMESTAMPTZ NOT NULL,
+         revoked BOOLEAN NOT NULL DEFAULT FALSE,
+         created_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
+         CONSTRAINT fk_refresh_tokens_user
+             FOREIGN KEY (user_id)
+             REFERENCES users(id)
+             ON DELETE CASCADE
+     );""",
 
-]
+ ]
 
 CREATE_INDEX_QUERIES = [
     "CREATE INDEX IF NOT EXISTS idx_sponsors_partners_event_id ON sponsors_partners(event_id);",
