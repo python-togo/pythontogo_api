@@ -521,8 +521,50 @@ CREATE_TABLE_QUERIES = [
             REFERENCES events(id)
             ON DELETE CASCADE
         );""",
+    """
+    CREATE TABLE IF NOT EXISTS feedbacks (
+        id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+        sex VARCHAR(64),
+        age VARCHAR(32),
+        profession VARCHAR(255),
+        country VARCHAR(120),
+        python_level VARCHAR(120),
+        heard TEXT,
+        rating INTEGER CHECK (rating >= 1 AND rating <= 5),
+        overall TEXT,
+        favorite TEXT,
+        improvements TEXT,
+        comments TEXT,
+         is_resolved BOOLEAN NOT NULL DEFAULT FALSE,
+         created_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
+         updated_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
+     );""",
+     """
+     CREATE TABLE IF NOT EXISTS users (
+         id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+         email VARCHAR(255) NOT NULL UNIQUE,
+         full_name VARCHAR(255) NOT NULL,
+         hashed_password TEXT NOT NULL,
+         is_active BOOLEAN NOT NULL DEFAULT TRUE,
+         is_superuser BOOLEAN NOT NULL DEFAULT FALSE,
+         created_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
+         updated_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
+     );""",
+     """
+     CREATE TABLE IF NOT EXISTS refresh_tokens (
+         id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+         user_id UUID NOT NULL,
+         token TEXT NOT NULL UNIQUE,
+         expires_at TIMESTAMPTZ NOT NULL,
+         revoked BOOLEAN NOT NULL DEFAULT FALSE,
+         created_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
+         CONSTRAINT fk_refresh_tokens_user
+             FOREIGN KEY (user_id)
+             REFERENCES users(id)
+             ON DELETE CASCADE
+     );""",
 
-]
+ ]
 
 CREATE_INDEX_QUERIES = [
     "CREATE INDEX IF NOT EXISTS idx_sponsors_partners_event_id ON sponsors_partners(event_id);",
@@ -539,33 +581,52 @@ CREATE_INDEX_QUERIES = [
 
 ALTER_TABLE_QUERIES = [
     "ALTER TABLE sponsors_partners ADD COLUMN IF NOT EXISTS package_tier package_tier_enum;",
+    "ALTER TABLE feedbacks DROP COLUMN IF EXISTS event_code;",
+    "ALTER TABLE feedbacks DROP COLUMN IF EXISTS name;",
+    "ALTER TABLE feedbacks DROP COLUMN IF EXISTS email;",
+    "ALTER TABLE feedbacks DROP COLUMN IF EXISTS subject;",
+    "ALTER TABLE feedbacks DROP COLUMN IF EXISTS message;",
+    "ALTER TABLE feedbacks ADD COLUMN IF NOT EXISTS days JSONB DEFAULT '[]'::jsonb;",
 ]
 
 
 def create_tables():
     """Return SQL queries in execution order for creating the schema."""
-    conn = connect(settings.db_url)
-    with conn.cursor() as cur:
-        cur.execute(CREATE_EXTENSIONS_QUERY)
-        cur.execute(CREATE_TYPES_QUERY)
-        for query in CREATE_TABLE_QUERIES:
-            cur.execute(query)
-        for query in ALTER_TABLE_QUERIES:
-            cur.execute(query)
-        for query in CREATE_INDEX_QUERIES:
-            cur.execute(query)
-    conn.commit()
-    return (
-        CREATE_EXTENSIONS_QUERY
-        + "\n"
-        + CREATE_TYPES_QUERY
-        + "\n"
-        + "\n".join(CREATE_TABLE_QUERIES)
-        + "\n"
-        + "\n".join(ALTER_TABLE_QUERIES)
-        + "\n"
-        + "\n".join(CREATE_INDEX_QUERIES)
-    )
+    import time
+    max_retries = 10
+    retry_delay = 2
+    last_error = None
+    for attempt in range(1, max_retries + 1):
+        try:
+            conn = connect(settings.db_url)
+            with conn.cursor() as cur:
+                cur.execute(CREATE_EXTENSIONS_QUERY)
+                cur.execute(CREATE_TYPES_QUERY)
+                for query in CREATE_TABLE_QUERIES:
+                    cur.execute(query)
+                for query in ALTER_TABLE_QUERIES:
+                    cur.execute(query)
+                for query in CREATE_INDEX_QUERIES:
+                    cur.execute(query)
+            conn.commit()
+            return (
+                CREATE_EXTENSIONS_QUERY
+                + "\n"
+                + CREATE_TYPES_QUERY
+                + "\n"
+                + "\n".join(CREATE_TABLE_QUERIES)
+                + "\n"
+                + "\n".join(ALTER_TABLE_QUERIES)
+                + "\n"
+                + "\n".join(CREATE_INDEX_QUERIES)
+            )
+        except Exception as exc:
+            last_error = exc
+            if attempt < max_retries:
+                print(f"Tentative {attempt}/{max_retries} : base non prête, attente {retry_delay}s...")
+                time.sleep(retry_delay)
+            else:
+                raise last_error
 
 
 def run_migrations():

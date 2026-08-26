@@ -1,0 +1,18 @@
+# Aligne la stack docker sur le volume postgres déjà initialisé
+# (postgres/password/pythontogo_db) et libère le port 8080, occupé par Keycloak.
+# Le .env racine vise l'instance locale supabase:5434, pas ces conteneurs.
+services:
+  db:
+    ports:
+      - "5434:5432"
+    environment:
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=password
+      - POSTGRES_DB=pythontogo_db
+
+  api:
+    ports: !override
+      - "8081:8080"
+    environment:
+      - DB_URL=postgresql://postgres:password@db:5432/pythontogo_db
+      - REDIS_URL=redis://redis:6379/0
