@@ -80,7 +80,10 @@ async def refresh_token(payload: TokenRefresh, db=Depends(get_db_connection)):
 
     token_row = stored[0]
     expires_at = token_row.get("expires_at")
-    if expires_at and datetime.fromisoformat(expires_at.replace("Z", "+00:00")) < datetime.now(timezone.utc):
+    # La colonne est un TIMESTAMPTZ : psycopg renvoie deja un datetime.
+    if isinstance(expires_at, str):
+        expires_at = datetime.fromisoformat(expires_at.replace("Z", "+00:00"))
+    if expires_at and expires_at < datetime.now(timezone.utc):
         raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail="Refresh token expired")
 
     users = await select(db, "users", filter={"id": user_id})
