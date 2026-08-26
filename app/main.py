@@ -33,7 +33,7 @@ else:
         "https://api.pytogo.org",
         "https://api.pycontg.pytogo.org"
         # "http://127.0.0.1:8080/",
-        # "http://localhost:8080/"
+        "http://localhost:8080/"
 
     ]
 
